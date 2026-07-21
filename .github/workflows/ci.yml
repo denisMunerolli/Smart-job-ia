@@ -1,4 +1,4 @@
-name: Java CI with Maven & Postgres
+name: Continuous Integration (Cloud Build & Test)
 
 on:
   push:
@@ -7,9 +7,10 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
 
+    # Banco de dados na nuvem para testes de integração
     services:
       postgres:
         image: postgres:15-alpine
@@ -26,9 +27,11 @@ jobs:
           --health-retries 5
 
     steps:
+    # 1. Baixa o código no servidor do GitHub
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    # 2. Configura Java 21 para compilação Maven
     - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
@@ -36,9 +39,24 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
-    - name: Build and Test with Maven
+    # 3. Executa Build e Testes Java (Core, API, AI, Batch)
+    - name: Run Java Unit & Integration Tests
       env:
         SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/smartjobai_db
         SPRING_DATASOURCE_USERNAME: postgres
         SPRING_DATASOURCE_PASSWORD: postgrespassword
       run: mvn clean verify -B
+
+    # 4. Configura Python na nuvem para testar ferramentas secundárias
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    # 5. Executa os testes do módulo Python (Tailor)
+    - name: Run Python Tools Tests
+      run: |
+        if [ -d "tools/tailor" ]; then
+          cd tools/tailor
+          python -m unittest discover -s . -p "test_*.py"
+        fi
