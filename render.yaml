@@ -2,8 +2,10 @@ services:
   # 1. API Spring Boot
   - type: web
     name: smartjobai-api
-    env: java
-    buildCommand: mvn clean package -DskipTests
+    runtime: image
+    image:
+      url: eclipse-temurin:21-jdk-alpine
+    buildCommand: ./mvnw clean package -DskipTests
     startCommand: java -jar -Dspring.profiles.active=prod smartjobai-api/target/smartjobai-api-1.0.0-SNAPSHOT.jar
     envVars:
       - key: SPRING_DATASOURCE_URL
@@ -23,4 +25,4 @@ services:
 databases:
   - name: smartjobai-db
     databaseName: smartjobai_db
-    user: postgres
+    user: smartjobuser
