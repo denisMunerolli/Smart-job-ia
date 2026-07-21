@@ -1,0 +1,55 @@
+name: Executar Smart.job.ia
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  run-system:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Baixa o seu repositório exatamente como está
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Prepara o Java 21 para a compilação
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      # 3. Sobe o ambiente Docker se houver docker-compose no seu projeto
+      - name: Subir Docker
+        run: |
+          if [ -f "Smart.job.ia/docker/docker-compose.yml" ]; then
+            docker compose -f Smart.job.ia/docker/docker-compose.yml up -d
+          elif [ -f "docker/docker-compose.yml" ]; then
+            docker compose -f docker/docker-compose.yml up -d
+          fi
+
+      # 4. Compila o projeto com o Maven que já está na raiz
+      - name: Compilar Projeto (Maven)
+        run: mvn clean test --batch-mode
+
+      # 5. Executa diretamente o seu script de testes Java sem alterações
+      - name: Executar Script de Testes Java
+        run: |
+          if [ -f "Smart.job.ia/smartjobai-testes/java/run-tests.sh" ]; then
+            chmod +x Smart.job.ia/smartjobai-testes/java/run-tests.sh
+            ./Smart.job.ia/smartjobai-testes/java/run-tests.sh
+          fi
+
+      # 6. Executa diretamente o seu script de testes Python sem alterações
+      - name: Executar Script de Testes Python
+        run: |
+          if [ -f "Smart.job.ia/smartjobai-testes/python/run-tests.sh" ]; then
+            chmod +x Smart.job.ia/smartjobai-testes/python/run-tests.sh
+            ./Smart.job.ia/smartjobai-testes/python/run-tests.sh
+          fi
