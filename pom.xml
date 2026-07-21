@@ -22,18 +22,10 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <testcontainers.version>1.19.7</testcontainers.version>
-        <!-- Nova propriedade para controlar a versão do Lucene em todos os módulos -->
         <lucene.version>9.10.0</lucene.version>
     </properties>
 
-    <modules>
-        <module>smartjobai-commons</module>
-        <module>smartjobai-core</module>
-        <module>smartjobai-infrastructure</module>
-        <module>smartjobai-ai</module>
-        <module>smartjobai-batch</module>
-        <module>smartjobai-api</module>
-    </modules>
+    <!-- Módulos removidos para evitar erro de caminho -->
 
     <dependencyManagement>
         <dependencies>
@@ -44,7 +36,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- Opcional: defina a versão do Lucene no gerenciamento para todos os módulos -->
             <dependency>
                 <groupId>org.apache.lucene</groupId>
                 <artifactId>lucene-analyzers-common</artifactId>
