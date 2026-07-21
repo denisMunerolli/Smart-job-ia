@@ -1,0 +1,37 @@
+{
+  "nome": "Seu Nome Completo",
+  "email": "voce@email.com",
+  "linkedinUrl": "https://linkedin.com/in/seu-usuario",
+  "githubUrl": "https://github.com/seu-usuario",
+  "resumoProfissional": "Desenvolvedor backend com experiência em Java e Spring Boot, focado em construir APIs REST escaláveis e bem testadas.",
+  "habilidadesTecnicas": [
+    {"nome": "Java", "nivelProficiencia": "AVANCADO", "anosExperiencia": 3},
+    {"nome": "Spring Boot", "nivelProficiencia": "AVANCADO", "anosExperiencia": 2},
+    {"nome": "MySQL", "nivelProficiencia": "INTERMEDIARIO", "anosExperiencia": 3},
+    {"nome": "Docker", "nivelProficiencia": "INTERMEDIARIO", "anosExperiencia": 1},
+    {"nome": "Git", "nivelProficiencia": "AVANCADO", "anosExperiencia": 3}
+  ],
+  "experiencias": [
+    {
+      "empresa": "Empresa Exemplo Ltda",
+      "cargo": "Desenvolvedor Java Júnior",
+      "dataInicio": "2023-02",
+      "dataFim": null,
+      "atual": true,
+      "descricao": "Desenvolvimento e manutenção de APIs REST com Spring Boot, atuação em testes automatizados com JUnit e participação em revisões de código.",
+      "tecnologias": ["Java", "Spring Boot", "MySQL", "JUnit", "Git", "Docker"]
+    }
+  ],
+  "formacoes": [
+    {
+      "instituicao": "Universidade Exemplo",
+      "curso": "Análise e Desenvolvimento de Sistemas",
+      "nivel": "TECNICO",
+      "emAndamento": false
+    }
+  ],
+  "idiomas": [
+    {"nome": "Inglês", "nivel": "INTERMEDIARIO"}
+  ],
+  "certificacoes": []
+}

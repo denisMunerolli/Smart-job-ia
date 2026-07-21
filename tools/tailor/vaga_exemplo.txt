@@ -1,0 +1,20 @@
+Vaga: Desenvolvedor(a) Java Pleno
+
+Buscamos um(a) desenvolvedor(a) backend para atuar em um time ágil,
+construindo e mantendo microsserviços em Java com Spring Boot.
+
+Requisitos:
+- Experiência sólida com Java e Spring Boot
+- Conhecimento em bancos relacionais como MySQL ou PostgreSQL
+- Familiaridade com testes automatizados (JUnit, Mockito)
+- Experiência com Docker e containers
+- Conhecimento de mensageria (Kafka ou RabbitMQ) é um diferencial
+- Vivência com metodologias ágeis (Scrum ou Kanban)
+- Inglês intermediário para leitura de documentação técnica
+
+Diferenciais:
+- Experiência com Kubernetes
+- Conhecimento em arquitetura de microsserviços
+- Vivência com CI/CD (GitHub Actions, Jenkins)
+
+Oferecemos plano de carreira, trabalho remoto e ambiente colaborativo.

@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: smartjobai
+  profiles:
+    active: dev
+  jpa:
+    hibernate:
+      ddl-auto: validate   # schema é controlado pelo Flyway, não pelo Hibernate
+    open-in-view: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+app:
+  jwt:
+    expirationMs: 86400000   # 24h
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

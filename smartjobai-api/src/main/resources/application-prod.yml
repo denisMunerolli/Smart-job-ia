@@ -1,0 +1,41 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate   # o schema é controlado pelo Flyway, não pelo Hibernate
+    show-sql: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expirationMs: ${JWT_EXPIRATION_MS:86400000}
+
+logging:
+  level:
+    root: INFO
+    com.smartjobai: INFO
+    org.hibernate.SQL: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%X{requestId}] %-5level %logger{36} - %msg%n"
+
+# Usado pelo health check do Render (configure o path /actuator/health no
+# painel). Requer a dependência spring-boot-starter-actuator - veja o
+# DEPLOY_README.md.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
