@@ -25,10 +25,5 @@
             <artifactId>commons-text</artifactId>
             <version>1.11.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-analyzers-common</artifactId>
-            <version>9.11.1</version>
-        </dependency>
     </dependencies>
 </project>
