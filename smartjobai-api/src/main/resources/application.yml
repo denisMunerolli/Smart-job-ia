@@ -5,7 +5,7 @@ spring:
     active: dev
   jpa:
     hibernate:
-      ddl-auto: validate   # schema é controlado pelo Flyway, não pelo Hibernate
+      ddl-auto: validate
     open-in-view: false
   flyway:
     enabled: true
@@ -14,7 +14,7 @@ spring:
 
 app:
   jwt:
-    expirationMs: 86400000   # 24h
+    expirationMs: 86400000
 
 springdoc:
   swagger-ui:

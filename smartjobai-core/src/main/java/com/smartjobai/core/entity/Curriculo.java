@@ -15,13 +15,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
-/*
- * Nota: esta entidade ainda segue o padrão original da Fase 1 (id/timestamps
- * próprios, via @Data) em vez de estender EntidadeBase como as entidades da
- * Fase 2. Fica assim de propósito por ora — migrar para EntidadeBase é
- * candidato natural quando a Fase 3 (Banco de Currículos, versionamento e
- * templates) for implementada de verdade.
- */
 @Entity
 @Table(name = "curriculos")
 @Data

@@ -14,13 +14,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-/*
- * FIX em relação ao esqueleto original: @Builder sozinho, sem
- * @NoArgsConstructor, suprime o construtor padrão sem argumentos — e o
- * Hibernate precisa desse construtor para instanciar a entidade via
- * reflection. Sem isso, qualquer SELECT nesta tabela lançaria
- * InstantiationException em tempo de execução.
- */
 @Entity
 @Table(name = "vagas")
 @Data
@@ -34,9 +27,9 @@ public class Vaga {
     private Long id;
 
     @Column(name = "id_externo")
-    private String idExterno; // ID na plataforma de origem
+    private String idExterno;
 
-    private String fonte; // "linkedin", "indeed", etc.
+    private String fonte;
 
     private String titulo;
 

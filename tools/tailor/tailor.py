@@ -38,9 +38,6 @@ STOPWORDS_PT = {
     "numa", "nesse", "nessa", "neste", "nesta", "isso", "aquele", "aquela",
 }
 
-# Vocabulário comum de anúncios de vaga que não representa uma habilidade
-# técnica em si (ex.: "buscamos", "requisitos", "diferencial") - filtrado
-# separadamente do stopword list geral para deixar explícito o motivo.
 RUIDO_VAGA_PT = {
     "buscamos", "procuramos", "requisitos", "requisito", "desejavel",
     "diferencial", "diferenciais", "oferecemos", "vaga", "vagas", "atuar",
@@ -53,7 +50,6 @@ RUIDO_VAGA_PT = {
 
 
 def normalizar(texto: str) -> str:
-    """minúsculas, remove acentos, mantém símbolos comuns em stacks técnicas (c++, c#, node.js)."""
     texto = texto.lower()
     texto = unicodedata.normalize("NFD", texto)
     texto = "".join(c for c in texto if unicodedata.category(c) != "Mn")
@@ -66,9 +62,6 @@ def tokenizar(texto: str) -> list:
     normalizado = normalizar(texto or "")
     tokens = []
     for bruto in normalizado.split(" "):
-        # remove pontuação sobrando nas bordas (ex.: "boot." -> "boot"),
-        # mas preserva caracteres internos usados em termos técnicos
-        # compostos como "node.js", "c++", "c#"
         t = bruto.strip(".,;:()[]\"'-")
         if t and t not in STOPWORDS_PT and t not in RUIDO_VAGA_PT and len(t) > 1:
             tokens.append(t)

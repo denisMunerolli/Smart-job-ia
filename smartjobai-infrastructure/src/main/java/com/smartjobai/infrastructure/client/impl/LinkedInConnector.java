@@ -9,11 +9,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /*
- * Implementação SIMULADA, como definido desde a Fase 1 do roadmap: para uma
- * integração real com o LinkedIn seria necessário usar a API oficial (exige
- * credenciais aprovadas pela plataforma) — scraping não autorizado viola os
- * termos de uso do LinkedIn. Isto fica como mock até que essa integração
- * oficial seja implementada.
+ * Implementação SIMULADA de propósito: integração real com o LinkedIn
+ * exigiria a API oficial (credenciais aprovadas pela plataforma) — scraping
+ * não autorizado viola os termos de uso.
  */
 @Component
 @Slf4j
@@ -56,10 +54,6 @@ public class LinkedInConnector implements VagaConnector {
 
     @Override
     public void candidatar(Vaga vaga, String curriculoJson) {
-        // Candidatura automática não é implementada de propósito — a maioria
-        // das plataformas proíbe isso em seus termos de uso. Este método
-        // existe na interface para um fluxo futuro onde o usuário revisa e
-        // confirma manualmente antes do envio.
         log.info("[MOCK] Candidatura preparada para a vaga {} — revisão manual necessária antes do envio.",
                 vaga.getTitulo());
     }

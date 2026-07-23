@@ -2,8 +2,6 @@
 Testes do tailor.py — só biblioteca padrão, roda direto pelo terminal:
 
     python3 -m unittest test_tailor.py -v
-
-Sem instalar nada, sem Docker, sem IDE.
 """
 
 import subprocess
@@ -28,7 +26,6 @@ class TestNormalizacaoETokenizacao(unittest.TestCase):
         self.assertEqual(normalizar("Programação Ágil"), "programacao agil")
 
     def test_tokenizar_remove_pontuacao_de_borda(self):
-        # regressão do bug "boot." (ponto de fim de frase grudado no token)
         tokens = tokenizar("Trabalhamos com Spring Boot.")
         self.assertIn("boot", tokens)
         self.assertNotIn("boot.", tokens)
@@ -79,7 +76,6 @@ class TestReordenacao(unittest.TestCase):
 
 
 class TestExecucaoDeParaCompleta(unittest.TestCase):
-    """Smoke test: chama o script pela linha de comando, do jeito que você usaria de verdade."""
 
     def test_script_roda_e_gera_os_tres_arquivos_esperados(self):
         base = Path(__file__).resolve().parent
@@ -100,7 +96,6 @@ class TestExecucaoDeParaCompleta(unittest.TestCase):
         self.assertTrue((saida / "curriculo_ajustado.md").exists())
         self.assertTrue((saida / "carta_apresentacao.md").exists())
 
-        # limpeza dos arquivos gerados pelo próprio teste
         for arquivo in saida.glob("*"):
             arquivo.unlink()
         saida.rmdir()

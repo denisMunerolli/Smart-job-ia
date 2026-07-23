@@ -1,13 +1,5 @@
 package com.smartjobai.core.service;
 
-/*
- * Diferença para o FormacaoServiceTest (Testcontainers): este teste NÃO sobe
- * Spring context nem banco de dados real — só mocka o repositório com
- * Mockito. Roda em milissegundos e não precisa de Docker, ideal para rodar
- * a cada alteração pelo terminal. O FormacaoServiceTest com Testcontainers
- * continua valendo para validar o comportamento real contra MySQL.
- */
-
 import com.smartjobai.core.entity.Formacao;
 import com.smartjobai.core.entity.NivelFormacao;
 import com.smartjobai.core.entity.Usuario;
@@ -106,8 +98,6 @@ class FormacaoServiceUnitTest {
 
         formacaoService.remover("dono@email.com", 7L);
 
-        // se chegou até aqui sem lançar exceção, a validação de propriedade passou
-        // e o repository.delete foi chamado com o objeto correto
         org.mockito.Mockito.verify(repository).delete(formacaoDoDono);
     }
 }

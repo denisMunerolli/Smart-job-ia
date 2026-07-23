@@ -8,7 +8,7 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: validate   # o schema é controlado pelo Flyway, não pelo Hibernate
+      ddl-auto: validate
     show-sql: false
   flyway:
     enabled: true
@@ -28,9 +28,6 @@ logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%X{requestId}] %-5level %logger{36} - %msg%n"
 
-# Usado pelo health check do Render (configure o path /actuator/health no
-# painel). Requer a dependência spring-boot-starter-actuator - veja o
-# DEPLOY_README.md.
 management:
   endpoints:
     web:

@@ -10,20 +10,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * Contexto Spring mínimo só para os testes de {@code smartjobai-core}.
- *
- * Por que isto é necessário: {@code @SpringBootTest} (usado em
- * UsuarioServiceTest, FormacaoServiceTest, etc.) precisa achar uma classe
- * {@code @SpringBootApplication}/{@code @SpringBootConfiguration} subindo a
- * árvore de pacotes a partir do teste. A única classe assim do projeto é
- * {@code SmartJobAIApplication}, no módulo {@code api} — mas {@code core}
- * corretamente NÃO depende de {@code api} (senão seria dependência
- * circular). Sem esta classe aqui, os testes com Testcontainers falhariam
- * já na subida do contexto, antes mesmo de rodar qualquer asserção.
- *
- * Pelo mesmo motivo, o bean de {@link PasswordEncoder} (usado por
- * UsuarioService) só existia em {@code SecurityConfig} no módulo api — por
- * isso ele é redeclarado aqui, só para o escopo de teste.
+ * Contexto Spring mínimo só para os testes de smartjobai-core. Necessário
+ * porque a única classe @SpringBootApplication do projeto vive no módulo
+ * api, que core não pode depender (seria circular). O bean de
+ * PasswordEncoder também é redeclarado aqui pelo mesmo motivo (só existia
+ * em SecurityConfig, no módulo api).
  */
 @SpringBootConfiguration
 @EnableAutoConfiguration

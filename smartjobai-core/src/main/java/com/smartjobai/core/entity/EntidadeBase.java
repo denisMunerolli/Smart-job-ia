@@ -13,11 +13,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
-/**
- * Superclasse comum para as entidades do domínio de cadastro (Fase 2).
- * Centraliza id e timestamps de auditoria para evitar duplicação de campos
- * entre Usuario, Formacao, Experiencia, Idioma, Certificacao e HabilidadeTecnica.
- */
 @MappedSuperclass
 @Getter
 @Setter

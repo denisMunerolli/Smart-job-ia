@@ -27,8 +27,8 @@
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-analysis-common</artifactId>
-            <version>${lucene.version}</version>
+            <artifactId>lucene-analyzers-common</artifactId>
+            <version>9.9.2</version>
         </dependency>
     </dependencies>
 </project>

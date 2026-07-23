@@ -31,10 +31,6 @@ public class UsuarioService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado: " + email));
     }
 
-    /**
-     * Carrega o usuário com todas as coleções de cadastro inicializadas,
-     * para uso no endpoint GET /api/usuarios/me (perfil completo).
-     */
     @Transactional(readOnly = true)
     public Usuario buscarPerfilCompleto(String email) {
         Usuario usuario = buscarPorEmail(email);

@@ -14,11 +14,6 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Fase 2: agora estende EntidadeBase (id/dataCriacao/dataAtualizacao herdados)
- * e ganha os campos de rede/portfólio sugeridos no roadmap, além das coleções
- * para as novas entidades de cadastro.
- */
 @Entity
 @Table(name = "usuarios", indexes = {
         @Index(name = "idx_usuario_email", columnList = "email", unique = true)

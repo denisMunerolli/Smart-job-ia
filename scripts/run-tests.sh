@@ -8,7 +8,7 @@
 #   ./scripts/run-tests.sh python        -> só Python
 
 set -e
-cd "$(dirname "$0")/.."   # garante que rodamos a partir da raiz do repositório
+cd "$(dirname "$0")/.."
 
 rodar_java_unit() {
     echo "=== Java: testes unitários (rápidos, sem Docker) ==="

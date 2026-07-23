@@ -18,13 +18,12 @@ public class VagaImportJob {
     private final List<VagaConnector> connectors;
     private final VagaRepository vagaRepository;
 
-    @Scheduled(cron = "0 0 6 * * ?") // todo dia às 6h
+    @Scheduled(cron = "0 0 6 * * ?")
     public void importarVagas() {
         for (VagaConnector connector : connectors) {
             List<Vaga> vagas = connector.buscarVagas("Java", "Brasil");
             int novas = 0;
             for (Vaga vaga : vagas) {
-                // evita duplicar vaga já coletada antes (mesma fonte + id externo)
                 if (!vagaRepository.existsByIdExternoAndFonte(vaga.getIdExterno(), vaga.getFonte())) {
                     vagaRepository.save(vaga);
                     novas++;

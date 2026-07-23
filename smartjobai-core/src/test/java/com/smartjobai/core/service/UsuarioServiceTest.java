@@ -42,7 +42,7 @@ public class UsuarioServiceTest {
         u.setNome("Teste");
         Usuario salvo = usuarioService.cadastrar(u);
         assertThat(salvo.getId()).isNotNull();
-        assertThat(salvo.getSenha()).isNotEqualTo("123456"); // encriptada
+        assertThat(salvo.getSenha()).isNotEqualTo("123456");
     }
 
     @Test

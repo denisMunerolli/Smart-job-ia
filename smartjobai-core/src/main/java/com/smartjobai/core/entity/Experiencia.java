@@ -46,10 +46,6 @@ public class Experiencia extends EntidadeBase {
     @Column(length = 3000)
     private String descricao;
 
-    /**
-     * Tecnologias usadas na experiência. Alimenta a busca por palavras-chave
-     * do Dashboard/Analytics (Fase 7/9) e o matching por similaridade (Fase 4).
-     */
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "experiencia_tecnologias", joinColumns = @JoinColumn(name = "experiencia_id"),
             indexes = @Index(name = "idx_exp_tecnologia", columnList = "tecnologia"))

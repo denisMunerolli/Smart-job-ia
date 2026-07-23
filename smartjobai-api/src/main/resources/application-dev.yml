@@ -8,7 +8,6 @@ spring:
 
 app:
   jwt:
-    # Só para desenvolvimento local — nunca reutilize este valor em produção.
     secret: dev-secret-troque-antes-de-ir-para-producao-0123456789
 
 logging:

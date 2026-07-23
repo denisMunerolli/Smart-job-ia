@@ -22,10 +22,16 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <testcontainers.version>1.19.7</testcontainers.version>
-        <lucene.version>9.10.0</lucene.version>
     </properties>
 
-    <!-- Módulos removidos para evitar erro de caminho -->
+    <modules>
+        <module>smartjobai-commons</module>
+        <module>smartjobai-core</module>
+        <module>smartjobai-infrastructure</module>
+        <module>smartjobai-ai</module>
+        <module>smartjobai-batch</module>
+        <module>smartjobai-api</module>
+    </modules>
 
     <dependencyManagement>
         <dependencies>
@@ -35,11 +41,6 @@
                 <version>${testcontainers.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.lucene</groupId>
-                <artifactId>lucene-analyzers-common</artifactId>
-                <version>${lucene.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

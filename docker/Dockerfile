@@ -1,42 +1,48 @@
-# ---- Etapa 1: Build ----
-FROM maven:3.9.6-eclipse-temurin-21 AS build
+# ---- Etapa 1: build ----
+# Builda todos os módulos Maven a partir do código-fonte.
+# Necessário porque o Railway/Render (e a maioria dos PaaS) builda a imagem
+# direto do repositório — não existe um target/*.jar pronto no repo.
+FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /workspace
 
-# Copia todo o código para o container
-COPY . .
+# Copia primeiro só os pom.xml de cada módulo para aproveitar o cache de
+# camadas do Docker: se o código mudar mas as dependências não, esta camada
+# não é reconstruída.
+COPY pom.xml .
+COPY smartjobai-commons/pom.xml smartjobai-commons/
+COPY smartjobai-core/pom.xml smartjobai-core/
+COPY smartjobai-infrastructure/pom.xml smartjobai-infrastructure/
+COPY smartjobai-ai/pom.xml smartjobai-ai/
+COPY smartjobai-batch/pom.xml smartjobai-batch/
+COPY smartjobai-api/pom.xml smartjobai-api/
+RUN mvn -B dependency:go-offline
 
-# Compila todos os módulos e gera o JAR executável diretamente
+# Agora copia o código-fonte completo e builda o jar executável do módulo api
+COPY smartjobai-commons smartjobai-commons
+COPY smartjobai-core smartjobai-core
+COPY smartjobai-infrastructure smartjobai-infrastructure
+COPY smartjobai-ai smartjobai-ai
+COPY smartjobai-batch smartjobai-batch
+COPY smartjobai-api smartjobai-api
 RUN mvn -B clean package -DskipTests
 
-# ---- Etapa 2: Runtime ----
-FROM eclipse-temurin:21-jre-alpine
+# ---- Etapa 2: runtime ----
+# Imagem final enxuta, só com o JRE e o jar — não carrega o Maven nem o
+# código-fonte, então fica bem menor que a imagem de build.
+# É por isso que um startCommand custom NÃO deve apontar para
+# "smartjobai-api/target/...": esse caminho só existe na etapa de build,
+# que é descartada aqui. Só /app/app.jar existe na imagem final.
+FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 
-# Copia o JAR compilado do módulo API
-COPY --from=build /workspace/smartjobai-api/target/smartjobai-api-*.jar app.jar
-# ---- Etapa 1: Build ----
-FROM maven:3.9.6-eclipse-temurin-21 AS build
-WORKDIR /workspace
-
-# Copia todo o código-fonte do projeto multi-módulo
-COPY . .
-
-# Compila o projeto raiz e todos os submódulos ignorando testes para acelerar
-RUN mvn -B clean package -DskipTests
-
-# ---- Etapa 2: Runtime ----
-FROM eclipse-temurin:21-jre-alpine
-WORKDIR /app
-
-# Copia o JAR executável gerado especificamente no submódulo smartjobai-api
 COPY --from=build /workspace/smartjobai-api/target/smartjobai-api-*.jar app.jar
 
-# Configurações de execução
-EXPOSE 8080
-ENV SPRING_PROFILES_ACTIVE=prod
+# Roda como usuário não-root por segurança
+RUN useradd --create-home --shell /bin/bash appuser && chown appuser:appuser app.jar
+USER appuser
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
-# Configurações de execução
+# O Railway/Render injeta a variável PORT dinamicamente; o
+# application-prod.yml lê ${PORT:8080}, então isto funciona nos dois.
 EXPOSE 8080
 ENV SPRING_PROFILES_ACTIVE=prod
 
