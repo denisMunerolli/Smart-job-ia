@@ -48,10 +48,6 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
             <version>0.11.5</version>
@@ -79,4 +75,22 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <!--
+      FIX: sem isto, "mvn package" gera só o jar "plain" (classes puras, sem
+      dependências, sem Main-Class no manifesto) — é exatamente o que causa
+      o erro "no main manifest attribute, in app.jar" no Railway. Declarar o
+      plugin em pluginManagement (no pom pai) não é suficiente: ele só roda
+      de verdade se também for declarado aqui, no módulo que gera o jar
+      executável. O goal "repackage" já é vinculado à fase "package"
+      automaticamente por este plugin, então não precisa de <executions>.
+    -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
