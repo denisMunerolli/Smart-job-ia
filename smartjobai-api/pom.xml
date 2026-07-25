@@ -47,6 +47,18 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+        <!--
+          FIX: faltava esta dependência. Praticamente todas as classes deste
+          módulo (controllers, JwtTokenProvider, JwtAuthenticationFilter,
+          CustomUserDetailsService, SecurityConfig, AuthRequest, AuthResponse)
+          usam anotações do Lombok (@RequiredArgsConstructor, @Slf4j, @Data).
+          Sem isso, "package lombok does not exist" em ~15 arquivos.
+        -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -77,13 +89,10 @@
     </dependencies>
 
     <!--
-      FIX: sem isto, "mvn package" gera só o jar "plain" (classes puras, sem
-      dependências, sem Main-Class no manifesto) — é exatamente o que causa
-      o erro "no main manifest attribute, in app.jar" no Railway. Declarar o
-      plugin em pluginManagement (no pom pai) não é suficiente: ele só roda
-      de verdade se também for declarado aqui, no módulo que gera o jar
-      executável. O goal "repackage" já é vinculado à fase "package"
-      automaticamente por este plugin, então não precisa de <executions>.
+      FIX anterior: sem isto, "mvn package" gera só o jar "plain" (sem
+      Main-Class no manifesto) — causa "no main manifest attribute".
+      Declarar em pluginManagement (no pom pai) não basta: precisa estar
+      aqui também, no módulo que gera o jar executável.
     -->
     <build>
         <plugins>
