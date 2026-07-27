@@ -1,6 +1,6 @@
 # SmartJobAI
 
-Backend em Java/Spring Boot (multi-módulo Maven) para gestão de currículo,
+Backend em Java/Spring Boot (multi-módulo Maven, banco PostgreSQL) para gestão de currículo,
 com um utilitário Python separado para comparar currículo x vaga.
 
 **Estado atual:** Fase 1 (fundação) + Fase 2 (cadastro completo)
@@ -24,9 +24,9 @@ Detalhes de arquitetura (e uma dependência circular que ela evita):
 ## Rodando localmente (sem Docker)
 
 ```bash
-brew install mysql
-brew services start mysql
-mysql -u root -e "CREATE DATABASE smartjobai;"
+brew install postgresql@16
+brew services start postgresql@16
+createdb smartjobai
 
 mvn clean install -DskipTests
 cd smartjobai-api
@@ -71,4 +71,5 @@ sem enviar nada automaticamente. `tools/tailor/README.md`.
 nunca definido, `Vaga` com `@Builder` sem `@NoArgsConstructor` (quebra o
 Hibernate), ausência de contexto Spring próprio para os testes do módulo
 `core`, `startCommand` de deploy apontando para um caminho que não existe na
-imagem Docker final. Detalhes em `docs/arquitetura.md` e `docs/deploy.md`.
+imagem Docker final, dependência do Lombok faltando no `pom.xml` do `api`,
+e migração completa de MySQL para PostgreSQL. Detalhes em `docs/arquitetura.md` e `docs/deploy.md`.

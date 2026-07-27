@@ -1,24 +1,38 @@
 # Deploy (Railway ou Render, a partir do GitHub)
 
-## Banco
+## Banco: PostgreSQL
 
-Ambas plataformas priorizam Postgres no free tier. O projeto usa MySQL
-(JPA + Flyway) — use um MySQL gerenciado (Railway tem plugin de um clique;
-Aiven/Clever Cloud são alternativas gratuitas) ou migre as migrations para
-Postgres.
+O projeto usa PostgreSQL (migrado de MySQL para aproveitar o banco gerenciado
+gratuito nativo do Railway/Render, que é Postgres). Crie o serviço de banco
+direto na plataforma:
+- **Railway**: `+ New` → `Database` → `Add PostgreSQL`
+- **Render**: `New +` → `PostgreSQL`
 
-## Configuração do serviço
+## Configuração do serviço da aplicação
 
 - Build: Dockerfile em `docker/Dockerfile`, contexto = raiz do repositório.
 - Health check: `/actuator/health`.
 - Variáveis de ambiente obrigatórias: `SPRING_DATASOURCE_URL`,
   `SPRING_DATASOURCE_USERNAME`, `SPRING_DATASOURCE_PASSWORD`, `JWT_SECRET`.
-- `PORT` e `SPRING_PROFILES_ACTIVE=prod` já são tratados automaticamente
-  (a plataforma injeta `PORT`; o `Dockerfile` já define o profile).
+- `PORT` e `SPRING_PROFILES_ACTIVE=prod` já são tratados automaticamente.
 - **Não** defina um `startCommand` customizado apontando para
   `smartjobai-api/target/...` — esse caminho só existe na etapa de build do
-  Dockerfile multi-stage, não na imagem final (que só tem `/app/app.jar`).
-  Deixe o `ENTRYPOINT` do próprio Dockerfile cuidar disso.
+  Dockerfile multi-stage. Deixe o `ENTRYPOINT` do próprio Dockerfile cuidar
+  disso.
+- No Railway, verifique também se o campo **Dockerfile Path** nas
+  configurações do serviço (dashboard) não ficou sobrescrito com um valor
+  antigo — ele tem prioridade sobre o `railway.json` do repositório.
+
+### SPRING_DATASOURCE_URL no Railway (referenciando o serviço Postgres)
+
+```
+SPRING_DATASOURCE_URL=jdbc:postgresql://${{Postgres.PGHOST}}:${{Postgres.PGPORT}}/${{Postgres.PGDATABASE}}
+SPRING_DATASOURCE_USERNAME=${{Postgres.PGUSER}}
+SPRING_DATASOURCE_PASSWORD=${{Postgres.PGPASSWORD}}
+```
+
+Troque `Postgres` pelo nome exato do serviço de banco no seu projeto Railway,
+se for diferente.
 
 ## Local com Docker (opcional)
 
