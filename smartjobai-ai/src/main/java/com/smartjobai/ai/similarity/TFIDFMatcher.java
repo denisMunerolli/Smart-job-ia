@@ -1,18 +1,16 @@
 package com.smartjobai.ai.similarity;
 
 import com.smartjobai.commons.util.TextUtils;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.springframework.stereotype.Component;
 
-import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class TFIDFMatcher {
@@ -32,19 +30,11 @@ public class TFIDFMatcher {
 
     private List<String> tokenizar(String texto) {
         String limpo = TextUtils.cleanText(TextUtils.removeAccents(texto.toLowerCase()));
-        try (Analyzer analyzer = new StandardAnalyzer();
-             var tokenStream = analyzer.tokenStream("content", new StringReader(limpo))) {
-            CharTermAttribute attr = tokenStream.addAttribute(CharTermAttribute.class);
-            tokenStream.reset();
-            List<String> tokens = new ArrayList<>();
-            while (tokenStream.incrementToken()) {
-                tokens.add(attr.toString());
-            }
-            tokenStream.end();
-            return tokens;
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao tokenizar", e);
-        }
+        
+        // Split por espaços e caracteres de pontuação, mantendo apenas palavras
+        return Arrays.stream(limpo.split("[\\s\\p{P}]+"))
+                .filter(t -> !t.isEmpty() && t.length() > 1)  // Ignora palavras muito curtas
+                .collect(Collectors.toList());
     }
 
     private Map<String, Double> calcularTFIDF(List<String> tokens, Set<String> vocabulario) {

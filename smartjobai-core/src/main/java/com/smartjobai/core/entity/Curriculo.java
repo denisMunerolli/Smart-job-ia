@@ -6,7 +6,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -34,8 +33,7 @@ public class Curriculo {
 
     private boolean ativo = true;
 
-    @Lob
-    @Column(name = "conteudo_json")
+    @Column(name = "conteudo_json", columnDefinition = "TEXT")
     private String conteudoJson;
 
     @CreationTimestamp

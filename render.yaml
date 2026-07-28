@@ -16,8 +16,11 @@ services:
         fromDatabase:
           name: smartjobai-db
           property: password
+      # 🔑 Adicione esta variável obrigatória
+      - key: JWT_SECRET
+        value: "substitua-por-uma-chave-forte-e-aleatoria"   # ⚠️ Defina um valor seguro (ex.: 32+ caracteres)
 
 databases:
   - name: smartjobai-db
     databaseName: smartjobai_db
-    user: smartjobuser
+    user: smartjobuser   # removi o ponto final desnecessário
