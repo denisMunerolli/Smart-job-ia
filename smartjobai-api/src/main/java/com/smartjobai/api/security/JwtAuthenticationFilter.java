@@ -26,6 +26,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                      HttpServletResponse response,
                                      FilterChain filterChain) throws ServletException, IOException {
+
+        String path = request.getRequestURI();
+
+        // Ignora completamente as rotas do Swagger (não tenta extrair/validar token)
+        if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui") ||
+            path.startsWith("/swagger-resources") || path.startsWith("/webjars") ||
+            path.equals("/swagger-ui.html") || path.startsWith("/docs")) {
+            filterChain.doFilter(request, response);
+            return; // <-- retorna imediatamente, sem processar JWT
+        }
+
+        // Código original (inalterado)
         String token = getJwtFromRequest(request);
         if (token != null && tokenProvider.validateToken(token)) {
             String username = tokenProvider.getUsernameFromToken(token);
