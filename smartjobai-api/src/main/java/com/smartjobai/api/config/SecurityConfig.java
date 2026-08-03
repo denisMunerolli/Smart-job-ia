@@ -28,7 +28,9 @@ public class SecurityConfig {
         "/swagger-ui/**",
         "/swagger-ui.html",
         "/swagger-resources/**",
-        "/webjars/**"
+        "/webjars/**",
+        "/docs",          // <-- ADICIONADO
+        "/docs/**"        // <-- ADICIONADO
     };
 
     @Bean
@@ -38,7 +40,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(SWAGGER_WHITELIST).permitAll()
+                        .requestMatchers(SWAGGER_WHITELIST).permitAll() // <-- agora inclui /docs
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
