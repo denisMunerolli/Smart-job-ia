@@ -44,23 +44,23 @@ jobs:
       run: |
         set -o pipefail
         mvn clean verify -B 2>&1 | tee /tmp/maven-output.txt; MVN_EXIT=${PIPESTATUS[0]}
-        if [ $MVN_EXIT -ne 0 ]; then
-          echo "::group::Maven Errors"
-          grep -E "\[ERROR\]|\[WARN\].*error|Tests run.*FAILURE|BUILD FAILURE|cannot find symbol|package.*does not exist|incompatible" /tmp/maven-output.txt | head -80 || true
-          echo "::endgroup::"
-          # Publica o erro como annotation visível na API
-          ERROR_MSG=$(grep -E "\[ERROR\]" /tmp/maven-output.txt | grep -v "^\[ERROR\] $" | head -30 | tr '\n' '|')
-          echo "MAVEN_ERRORS=${ERROR_MSG}" >> $GITHUB_ENV
-        fi
         exit $MVN_EXIT
 
-    - name: Print errors as step summary
+    - name: Commit error log to repository
       if: failure()
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        echo "## Build Errors" >> $GITHUB_STEP_SUMMARY
-        echo '```' >> $GITHUB_STEP_SUMMARY
-        grep -E "\[ERROR\]|Tests run.*FAILURE|BUILD FAILURE|cannot find symbol|package.*does not exist" /tmp/maven-output.txt | head -60 >> $GITHUB_STEP_SUMMARY || true
-        echo '```' >> $GITHUB_STEP_SUMMARY
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        # Extrai erros relevantes
+        grep -E "\[ERROR\]|Tests run.*FAILURE|BUILD FAILURE|cannot find symbol|package.*does not exist|incompatible types|method.*not found" \
+          /tmp/maven-output.txt | head -100 > docs/ci-build-errors.txt || true
+        echo "--- Full output tail ---" >> docs/ci-build-errors.txt
+        tail -50 /tmp/maven-output.txt >> docs/ci-build-errors.txt
+        git add docs/ci-build-errors.txt
+        git diff --staged --quiet || git commit -m "ci: atualiza log de erros do build [skip ci]"
+        git push
 
     - name: Set up Python 3.11
       uses: actions/setup-python@v5
