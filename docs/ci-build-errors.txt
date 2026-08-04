@@ -1,8 +1,13 @@
-[ERROR] COMPILATION ERROR : 
-[ERROR] /home/runner/work/Smart-job-ia/Smart-job-ia/smartjobai-ai/src/main/java/com/smartjobai/ai/similarity/TFIDFMatcher.java:[67,47] illegal escape character
+[ERROR] Tests run: 6, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.123 s <<< FAILURE! -- in com.smartjobai.ai.similarity.TFIDFMatcherTest
+[ERROR] com.smartjobai.ai.similarity.TFIDFMatcherTest.habilidadesFaltantes_deveRetornarTermesDaVagaAusentesNoCurriculo -- Time elapsed: 0.011 s <<< FAILURE!
+[ERROR] Failures: 
+[ERROR]   TFIDFMatcherTest.habilidadesFaltantes_deveRetornarTermesDaVagaAusentesNoCurriculo:45 
+[ERROR] Tests run: 6, Failures: 1, Errors: 0, Skipped: 0
 [INFO] BUILD FAILURE
-[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project smartjobai-ai: Compilation failure
-[ERROR] /home/runner/work/Smart-job-ia/Smart-job-ia/smartjobai-ai/src/main/java/com/smartjobai/ai/similarity/TFIDFMatcher.java:[67,47] illegal escape character
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.1.2:test (default-test) on project smartjobai-ai: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /home/runner/work/Smart-job-ia/Smart-job-ia/smartjobai-ai/target/surefire-reports for the individual test results.
+[ERROR] Please refer to dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
 [ERROR] -> [Help 1]
 [ERROR] 
 [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
@@ -14,46 +19,46 @@
 [ERROR] After correcting the problems, you can resume the build with the command
 [ERROR]   mvn <args> -rf :smartjobai-ai
 --- Full output tail ---
-[INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/apache/commons/commons-parent/58/commons-parent-58.pom
-[INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/commons/commons-parent/58/commons-parent-58.pom (83 kB at 2.7 MB/s)
-[INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/apache/commons/commons-text/1.11.0/commons-text-1.11.0.jar
-[INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/commons/commons-text/1.11.0/commons-text-1.11.0.jar (247 kB at 8.0 MB/s)
-[INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/apache/commons/commons-lang3/3.13.0/commons-lang3-3.13.0.jar
-[INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/commons/commons-lang3/3.13.0/commons-lang3-3.13.0.jar (632 kB at 18 MB/s)
+	at com.smartjobai.ai.similarity.TFIDFMatcherTest.habilidadesFaltantes_deveRetornarTermesDaVagaAusentesNoCurriculo(TFIDFMatcherTest.java:45)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+
 [INFO] 
-[INFO] --- clean:3.3.2:clean (default-clean) @ smartjobai-ai ---
+[INFO] Results:
 [INFO] 
-[INFO] --- resources:3.3.1:resources (default-resources) @ smartjobai-ai ---
-[INFO] skip non existing resourceDirectory /home/runner/work/Smart-job-ia/Smart-job-ia/smartjobai-ai/src/main/resources
-[INFO] skip non existing resourceDirectory /home/runner/work/Smart-job-ia/Smart-job-ia/smartjobai-ai/src/main/resources
+[ERROR] Failures: 
+[ERROR]   TFIDFMatcherTest.habilidadesFaltantes_deveRetornarTermesDaVagaAusentesNoCurriculo:45 
+Expecting ArrayList:
+  ["kubernetes", "docker"]
+to contain:
+  ["kubernetes", "docker", "aws"]
+but could not find the following element(s):
+  ["aws"]
+
 [INFO] 
-[INFO] --- compiler:3.11.0:compile (default-compile) @ smartjobai-ai ---
-[INFO] Changes detected - recompiling the module! :dependency
-[INFO] Compiling 1 source file with javac [debug release 21] to target/classes
-[INFO] -------------------------------------------------------------
-[ERROR] COMPILATION ERROR : 
-[INFO] -------------------------------------------------------------
-[ERROR] /home/runner/work/Smart-job-ia/Smart-job-ia/smartjobai-ai/src/main/java/com/smartjobai/ai/similarity/TFIDFMatcher.java:[67,47] illegal escape character
-[INFO] 1 error
-[INFO] -------------------------------------------------------------
+[ERROR] Tests run: 6, Failures: 1, Errors: 0, Skipped: 0
+[INFO] 
 [INFO] ------------------------------------------------------------------------
 [INFO] Reactor Summary for smartjobai 1.0.0-SNAPSHOT:
 [INFO] 
-[INFO] smartjobai ......................................... SUCCESS [  0.402 s]
-[INFO] smartjobai-commons ................................. SUCCESS [  7.766 s]
-[INFO] smartjobai-core .................................... SUCCESS [ 23.640 s]
-[INFO] smartjobai-infrastructure .......................... SUCCESS [  0.322 s]
-[INFO] smartjobai-ai ...................................... FAILURE [  0.315 s]
+[INFO] smartjobai ......................................... SUCCESS [  0.283 s]
+[INFO] smartjobai-commons ................................. SUCCESS [  6.011 s]
+[INFO] smartjobai-core .................................... SUCCESS [ 23.238 s]
+[INFO] smartjobai-infrastructure .......................... SUCCESS [  0.354 s]
+[INFO] smartjobai-ai ...................................... FAILURE [  1.001 s]
 [INFO] smartjobai-batch ................................... SKIPPED
 [INFO] smartjobai-api ..................................... SKIPPED
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  35.174 s
-[INFO] Finished at: 2026-08-04T06:22:52Z
+[INFO] Total time:  33.088 s
+[INFO] Finished at: 2026-08-04T06:25:18Z
 [INFO] ------------------------------------------------------------------------
-[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project smartjobai-ai: Compilation failure
-[ERROR] /home/runner/work/Smart-job-ia/Smart-job-ia/smartjobai-ai/src/main/java/com/smartjobai/ai/similarity/TFIDFMatcher.java:[67,47] illegal escape character
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.1.2:test (default-test) on project smartjobai-ai: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /home/runner/work/Smart-job-ia/Smart-job-ia/smartjobai-ai/target/surefire-reports for the individual test results.
+[ERROR] Please refer to dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
 [ERROR] -> [Help 1]
 [ERROR] 
 [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
