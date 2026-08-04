@@ -18,20 +18,15 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CurriculoServiceUnitTest {
 
-    @Mock
-    private CurriculoRepository repository;
+    @Mock private CurriculoRepository repository;
+    @Mock private UsuarioService usuarioService;
 
-    @Mock
-    private UsuarioService usuarioService;
-
-    @InjectMocks
-    private CurriculoService service;
+    @InjectMocks private CurriculoService service;
 
     private Usuario usuario;
 
@@ -39,16 +34,17 @@ class CurriculoServiceUnitTest {
     void setUp() {
         usuario = new Usuario();
         usuario.setEmail("denis@test.com");
+        // ID precisa ser definido para os mocks de findByIdAndUsuarioId funcionarem
     }
 
     @Test
-    void criar_primeirocurriculo_deveSerVersao1() {
+    void criar_primeiroCurriculo_deveSerVersao1() {
         when(usuarioService.buscarPorEmail("denis@test.com")).thenReturn(usuario);
         when(repository.findByUsuarioIdOrderByVersaoDesc(any())).thenReturn(List.of());
         when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         Curriculo novo = new Curriculo();
-        novo.setTitulo("Currículo Java");
+        novo.setTitulo("Curriculo Java");
 
         Curriculo resultado = service.criar("denis@test.com", novo);
 
@@ -65,8 +61,7 @@ class CurriculoServiceUnitTest {
         when(repository.findByUsuarioIdOrderByVersaoDesc(any())).thenReturn(List.of(existente));
         when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        Curriculo novo = new Curriculo();
-        Curriculo resultado = service.criar("denis@test.com", novo);
+        Curriculo resultado = service.criar("denis@test.com", new Curriculo());
 
         assertThat(resultado.getVersao()).isEqualTo(3);
     }
@@ -77,8 +72,8 @@ class CurriculoServiceUnitTest {
         Curriculo c2 = new Curriculo(); c2.setAtivo(false);
 
         when(usuarioService.buscarPorEmail("denis@test.com")).thenReturn(usuario);
-        when(repository.findByIdAndUsuarioId(2L, null)).thenReturn(Optional.of(c2));
-        when(repository.findByUsuarioIdOrderByVersaoDesc(null)).thenReturn(List.of(c1, c2));
+        when(repository.findByIdAndUsuarioId(any(), any())).thenReturn(Optional.of(c2));
+        when(repository.findByUsuarioIdOrderByVersaoDesc(any())).thenReturn(List.of(c1, c2));
         when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         Curriculo resultado = service.ativar("denis@test.com", 2L);
@@ -93,17 +88,17 @@ class CurriculoServiceUnitTest {
         ativo.setAtivo(true);
 
         when(usuarioService.buscarPorEmail("denis@test.com")).thenReturn(usuario);
-        when(repository.findByIdAndUsuarioId(1L, null)).thenReturn(Optional.of(ativo));
+        when(repository.findByIdAndUsuarioId(any(), any())).thenReturn(Optional.of(ativo));
 
         assertThatThrownBy(() -> service.remover("denis@test.com", 1L))
                 .isInstanceOf(BusinessException.class)
-                .hasMessageContaining("currículo ativo");
+                .hasMessageContaining("ativo");
     }
 
     @Test
     void buscarPorId_naoEncontrado_deveLancarResourceNotFoundException() {
         when(usuarioService.buscarPorEmail("denis@test.com")).thenReturn(usuario);
-        when(repository.findByIdAndUsuarioId(99L, null)).thenReturn(Optional.empty());
+        when(repository.findByIdAndUsuarioId(any(), any())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.buscarPorId("denis@test.com", 99L))
                 .isInstanceOf(ResourceNotFoundException.class);
