@@ -20,9 +20,15 @@ app:
   jwt:
     expirationMs: 86400000
 
+# CORS: sobrescreva CORS_ALLOWED_ORIGINS no Railway para adicionar seu front-end
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173,http://localhost:8080}
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
+  # Garante que o Swagger UI usa a URL correta (https no Railway)
+  server-url: ${SERVER_URL:}
 
 management:
   endpoints:
