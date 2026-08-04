@@ -64,8 +64,7 @@ public class TFIDFMatcher {
 
         String limpo = TextUtils.cleanText(semAcentos.toLowerCase());
         if (limpo == null || limpo.isBlank()) return Collections.emptyList();
-
-        return Arrays.stream(limpo.split("[\\s\\p{P}]+"))
+        return Arrays.stream(limpo.split("[\s\p{P}]+"))
                 .filter(t -> !t.isEmpty() && t.length() > 1 && !STOPWORDS.contains(t))
                 .collect(Collectors.toList());
     }
