@@ -49,7 +49,7 @@ public class TFIDFMatcher {
 
         return freqVaga.entrySet().stream()
                 .filter(e -> !presencaCurriculo.contains(e.getKey()))
-                .filter(e -> e.getKey().length() > 3)
+                .filter(e -> e.getKey().length() >= 3)
                 .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
                 .limit(15)
                 .map(Map.Entry::getKey)
