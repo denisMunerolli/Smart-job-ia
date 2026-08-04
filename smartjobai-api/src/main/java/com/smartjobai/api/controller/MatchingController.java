@@ -3,8 +3,8 @@ package com.smartjobai.api.controller;
 import com.smartjobai.api.dto.MatchingRequest;
 import com.smartjobai.api.dto.MatchingResult;
 import com.smartjobai.api.security.SecurityUtils;
+import com.smartjobai.api.service.MatchingService;
 import com.smartjobai.core.exception.BusinessException;
-import com.smartjobai.core.service.MatchingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,15 +18,6 @@ public class MatchingController {
 
     private final MatchingService matchingService;
 
-    /**
-     * Compara currículo x vaga e retorna score TF-IDF + habilidades faltantes.
-     *
-     * Modo 1 — texto livre:
-     *   { "textoVaga": "...", "textoCurriculo": "..." }
-     *
-     * Modo 2 — por IDs (vaga e currículo devem existir no banco):
-     *   { "vagaId": 1, "curriculoId": 2 }
-     */
     @PostMapping
     public MatchingResult comparar(@RequestBody MatchingRequest request) {
 
