@@ -25,5 +25,11 @@
             <artifactId>commons-text</artifactId>
             <version>1.11.0</version>
         </dependency>
+        <!-- Dependencias de teste: JUnit 5 + AssertJ (gerenciadas pelo spring-boot-starter-test) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
