@@ -42,19 +42,25 @@ jobs:
         SPRING_DATASOURCE_USERNAME: postgres
         SPRING_DATASOURCE_PASSWORD: postgrespassword
       run: |
-        mvn clean verify -B 2>&1 | tee /tmp/maven-output.txt
-        EXIT_CODE=${PIPESTATUS[0]}
-        # Extrai apenas linhas de erro para um arquivo menor
-        grep -E "ERROR|FAILED|error:|cannot find|does not|Tests run|BUILD" /tmp/maven-output.txt > /tmp/maven-errors.txt || true
-        exit $EXIT_CODE
+        set -o pipefail
+        mvn clean verify -B 2>&1 | tee /tmp/maven-output.txt; MVN_EXIT=${PIPESTATUS[0]}
+        if [ $MVN_EXIT -ne 0 ]; then
+          echo "::group::Maven Errors"
+          grep -E "\[ERROR\]|\[WARN\].*error|Tests run.*FAILURE|BUILD FAILURE|cannot find symbol|package.*does not exist|incompatible" /tmp/maven-output.txt | head -80 || true
+          echo "::endgroup::"
+          # Publica o erro como annotation visível na API
+          ERROR_MSG=$(grep -E "\[ERROR\]" /tmp/maven-output.txt | grep -v "^\[ERROR\] $" | head -30 | tr '\n' '|')
+          echo "MAVEN_ERRORS=${ERROR_MSG}" >> $GITHUB_ENV
+        fi
+        exit $MVN_EXIT
 
-    - name: Upload Maven error log
+    - name: Print errors as step summary
       if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: maven-errors
-        path: /tmp/maven-errors.txt
-        retention-days: 1
+      run: |
+        echo "## Build Errors" >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        grep -E "\[ERROR\]|Tests run.*FAILURE|BUILD FAILURE|cannot find symbol|package.*does not exist" /tmp/maven-output.txt | head -60 >> $GITHUB_STEP_SUMMARY || true
+        echo '```' >> $GITHUB_STEP_SUMMARY
 
     - name: Set up Python 3.11
       uses: actions/setup-python@v5
