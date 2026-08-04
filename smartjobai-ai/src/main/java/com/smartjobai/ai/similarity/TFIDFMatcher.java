@@ -3,8 +3,8 @@ package com.smartjobai.ai.similarity;
 import com.smartjobai.commons.util.TextUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +15,17 @@ import java.util.stream.Collectors;
 @Component
 public class TFIDFMatcher {
 
+    // Stopwords em português e inglês — ignoradas no matching
+    private static final Set<String> STOPWORDS = Set.of(
+            "de", "da", "do", "em", "com", "para", "por", "que", "se", "ou",
+            "um", "uma", "os", "as", "na", "no", "ao", "dos", "das", "is",
+            "the", "and", "or", "in", "of", "to", "a", "an", "at", "on"
+    );
+
+    /**
+     * Calcula a similaridade entre os dois textos.
+     * Retorna um valor entre 0.0 (nenhuma relação) e 1.0 (textos idênticos).
+     */
     public double calcularSimilaridade(String textoVaga, String textoCurriculo) {
         List<String> tokensVaga = tokenizar(textoVaga);
         List<String> tokensCurriculo = tokenizar(textoCurriculo);
@@ -28,22 +39,50 @@ public class TFIDFMatcher {
         return cossenoSimilaridade(tfidfVaga, tfidfCurriculo);
     }
 
+    /**
+     * Retorna termos presentes na vaga mas ausentes (ou pouco frequentes)
+     * no currículo, ordenados por peso decrescente.
+     * Limita a 15 itens para não poluir a resposta.
+     */
+    public List<String> habilidadesFaltantes(String textoVaga, String textoCurriculo) {
+        List<String> tokensVaga = tokenizar(textoVaga);
+        List<String> tokensCurriculo = tokenizar(textoCurriculo);
+
+        Set<String> presencaCurriculo = new HashSet<>(tokensCurriculo);
+
+        // Frequência dos termos na vaga
+        Map<String, Integer> freqVaga = new HashMap<>();
+        for (String token : tokensVaga) {
+            freqVaga.merge(token, 1, Integer::sum);
+        }
+
+        return freqVaga.entrySet().stream()
+                .filter(e -> !presencaCurriculo.contains(e.getKey()))
+                .filter(e -> e.getKey().length() > 3)          // ignora termos muito curtos
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .limit(15)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+    }
+
+    // -----------------------------------------------------------------------
+
     private List<String> tokenizar(String texto) {
+        if (texto == null || texto.isBlank()) return Collections.emptyList();
+
         String limpo = TextUtils.cleanText(TextUtils.removeAccents(texto.toLowerCase()));
-        
-        // Split por espaços e caracteres de pontuação, mantendo apenas palavras
         return Arrays.stream(limpo.split("[\\s\\p{P}]+"))
-                .filter(t -> !t.isEmpty() && t.length() > 1)  // Ignora palavras muito curtas
+                .filter(t -> !t.isEmpty() && t.length() > 1 && !STOPWORDS.contains(t))
                 .collect(Collectors.toList());
     }
 
     private Map<String, Double> calcularTFIDF(List<String> tokens, Set<String> vocabulario) {
         Map<String, Integer> freq = new HashMap<>();
         for (String t : tokens) {
-            freq.put(t, freq.getOrDefault(t, 0) + 1);
+            freq.merge(t, 1, Integer::sum);
         }
-        Map<String, Double> tfidf = new HashMap<>();
         double totalTokens = Math.max(tokens.size(), 1);
+        Map<String, Double> tfidf = new HashMap<>();
         for (String termo : vocabulario) {
             double tf = freq.getOrDefault(termo, 0) / totalTokens;
             tfidf.put(termo, tf);
