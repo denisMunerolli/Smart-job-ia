@@ -1,13 +1,14 @@
-[ERROR] Tests run: 6, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.123 s <<< FAILURE! -- in com.smartjobai.ai.similarity.TFIDFMatcherTest
-[ERROR] com.smartjobai.ai.similarity.TFIDFMatcherTest.habilidadesFaltantes_deveRetornarTermesDaVagaAusentesNoCurriculo -- Time elapsed: 0.011 s <<< FAILURE!
-[ERROR] Failures: 
-[ERROR]   TFIDFMatcherTest.habilidadesFaltantes_deveRetornarTermesDaVagaAusentesNoCurriculo:45 
-[ERROR] Tests run: 6, Failures: 1, Errors: 0, Skipped: 0
+[ERROR] COMPILATION ERROR : 
+[ERROR] /home/runner/work/Smart-job-ia/Smart-job-ia/smartjobai-api/src/main/java/com/smartjobai/api/service/MatchingService.java:[64,50] cannot find symbol
+[ERROR] /home/runner/work/Smart-job-ia/Smart-job-ia/smartjobai-api/src/main/java/com/smartjobai/api/service/MatchingService.java:[81,50] cannot find symbol
 [INFO] BUILD FAILURE
-[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.1.2:test (default-test) on project smartjobai-ai: There are test failures.
-[ERROR] 
-[ERROR] Please refer to /home/runner/work/Smart-job-ia/Smart-job-ia/smartjobai-ai/target/surefire-reports for the individual test results.
-[ERROR] Please refer to dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project smartjobai-api: Compilation failure: Compilation failure: 
+[ERROR] /home/runner/work/Smart-job-ia/Smart-job-ia/smartjobai-api/src/main/java/com/smartjobai/api/service/MatchingService.java:[64,50] cannot find symbol
+[ERROR]   symbol:   method findByUsuarioIdAndAtivoTrue(java.lang.Long)
+[ERROR]   location: variable curriculoRepository of type com.smartjobai.core.repository.CurriculoRepository
+[ERROR] /home/runner/work/Smart-job-ia/Smart-job-ia/smartjobai-api/src/main/java/com/smartjobai/api/service/MatchingService.java:[81,50] cannot find symbol
+[ERROR]   symbol:   method findByUsuarioIdAndAtivoTrue(java.lang.Long)
+[ERROR]   location: variable curriculoRepository of type com.smartjobai.core.repository.CurriculoRepository
 [ERROR] -> [Help 1]
 [ERROR] 
 [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
@@ -17,48 +18,48 @@
 [ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
 [ERROR] 
 [ERROR] After correcting the problems, you can resume the build with the command
-[ERROR]   mvn <args> -rf :smartjobai-ai
+[ERROR]   mvn <args> -rf :smartjobai-api
 --- Full output tail ---
-	at com.smartjobai.ai.similarity.TFIDFMatcherTest.habilidadesFaltantes_deveRetornarTermesDaVagaAusentesNoCurriculo(TFIDFMatcherTest.java:45)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
-
-[INFO] 
-[INFO] Results:
-[INFO] 
-[ERROR] Failures: 
-[ERROR]   TFIDFMatcherTest.habilidadesFaltantes_deveRetornarTermesDaVagaAusentesNoCurriculo:45 
-Expecting ArrayList:
-  ["kubernetes", "docker"]
-to contain:
-  ["kubernetes", "docker", "aws"]
-but could not find the following element(s):
-  ["aws"]
-
-[INFO] 
-[ERROR] Tests run: 6, Failures: 1, Errors: 0, Skipped: 0
-[INFO] 
+  on the class path. A future release of javac may disable annotation processing
+  unless at least one processor is specified by name (-processor), or a search
+  path is specified (--processor-path, --processor-module-path), or annotation
+  processing is enabled explicitly (-proc:only, -proc:full).
+  Use -Xlint:-options to suppress this message.
+  Use -proc:none to disable annotation processing.
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /home/runner/work/Smart-job-ia/Smart-job-ia/smartjobai-api/src/main/java/com/smartjobai/api/service/MatchingService.java:[64,50] cannot find symbol
+  symbol:   method findByUsuarioIdAndAtivoTrue(java.lang.Long)
+  location: variable curriculoRepository of type com.smartjobai.core.repository.CurriculoRepository
+[ERROR] /home/runner/work/Smart-job-ia/Smart-job-ia/smartjobai-api/src/main/java/com/smartjobai/api/service/MatchingService.java:[81,50] cannot find symbol
+  symbol:   method findByUsuarioIdAndAtivoTrue(java.lang.Long)
+  location: variable curriculoRepository of type com.smartjobai.core.repository.CurriculoRepository
+[INFO] 2 errors 
+[INFO] -------------------------------------------------------------
 [INFO] ------------------------------------------------------------------------
 [INFO] Reactor Summary for smartjobai 1.0.0-SNAPSHOT:
 [INFO] 
-[INFO] smartjobai ......................................... SUCCESS [  0.283 s]
-[INFO] smartjobai-commons ................................. SUCCESS [  6.011 s]
-[INFO] smartjobai-core .................................... SUCCESS [ 23.238 s]
-[INFO] smartjobai-infrastructure .......................... SUCCESS [  0.354 s]
-[INFO] smartjobai-ai ...................................... FAILURE [  1.001 s]
-[INFO] smartjobai-batch ................................... SKIPPED
-[INFO] smartjobai-api ..................................... SKIPPED
+[INFO] smartjobai ......................................... SUCCESS [  0.163 s]
+[INFO] smartjobai-commons ................................. SUCCESS [  2.782 s]
+[INFO] smartjobai-core .................................... SUCCESS [ 24.054 s]
+[INFO] smartjobai-infrastructure .......................... SUCCESS [  0.550 s]
+[INFO] smartjobai-ai ...................................... SUCCESS [  0.880 s]
+[INFO] smartjobai-batch ................................... SUCCESS [  0.281 s]
+[INFO] smartjobai-api ..................................... FAILURE [  0.715 s]
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  33.088 s
-[INFO] Finished at: 2026-08-04T06:25:18Z
+[INFO] Total time:  29.769 s
+[INFO] Finished at: 2026-08-07T15:56:38Z
 [INFO] ------------------------------------------------------------------------
-[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.1.2:test (default-test) on project smartjobai-ai: There are test failures.
-[ERROR] 
-[ERROR] Please refer to /home/runner/work/Smart-job-ia/Smart-job-ia/smartjobai-ai/target/surefire-reports for the individual test results.
-[ERROR] Please refer to dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project smartjobai-api: Compilation failure: Compilation failure: 
+[ERROR] /home/runner/work/Smart-job-ia/Smart-job-ia/smartjobai-api/src/main/java/com/smartjobai/api/service/MatchingService.java:[64,50] cannot find symbol
+[ERROR]   symbol:   method findByUsuarioIdAndAtivoTrue(java.lang.Long)
+[ERROR]   location: variable curriculoRepository of type com.smartjobai.core.repository.CurriculoRepository
+[ERROR] /home/runner/work/Smart-job-ia/Smart-job-ia/smartjobai-api/src/main/java/com/smartjobai/api/service/MatchingService.java:[81,50] cannot find symbol
+[ERROR]   symbol:   method findByUsuarioIdAndAtivoTrue(java.lang.Long)
+[ERROR]   location: variable curriculoRepository of type com.smartjobai.core.repository.CurriculoRepository
 [ERROR] -> [Help 1]
 [ERROR] 
 [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
@@ -68,4 +69,4 @@ but could not find the following element(s):
 [ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
 [ERROR] 
 [ERROR] After correcting the problems, you can resume the build with the command
-[ERROR]   mvn <args> -rf :smartjobai-ai
+[ERROR]   mvn <args> -rf :smartjobai-api
