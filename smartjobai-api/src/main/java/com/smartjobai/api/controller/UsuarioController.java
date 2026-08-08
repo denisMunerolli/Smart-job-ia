@@ -52,7 +52,6 @@ public class UsuarioController {
 
     /**
      * GET /api/usuarios/me/stats
-     * Totais de vagas, candidaturas, curriculos e agrupamento por status.
      */
     @GetMapping("/stats")
     public UsuarioStatsResponse stats() {
@@ -78,11 +77,11 @@ public class UsuarioController {
     }
 
     /**
-     * GET /api/usuarios/me/vagas/recomendadas?limite=10
-     * Top vagas rankeadas por score TF-IDF do curriculo ativo.
+     * GET /api/usuarios/me/recomendacoes?limite=10
+     * Rota dedicada para evitar conflito com VagaController
      */
-    @GetMapping("/vagas/recomendadas")
-    public List<VagaRecomendadaResponse> recomendadas(
+    @GetMapping("/recomendacoes")
+    public List<VagaRecomendadaResponse> recomendacoes(
             @RequestParam(defaultValue = "10") int limite) {
         String email = SecurityUtils.getUsuarioAutenticadoEmail();
         return matchingService.recomendarVagas(email, Math.min(limite, 50))
