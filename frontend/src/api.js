@@ -28,10 +28,10 @@ export const authApi = {
 }
 
 export const perfilApi = {
-  buscar:    ()     => api.get('/api/usuarios/me'),
-  atualizar: (data) => api.put('/api/usuarios/me', data),
-  stats:     ()     => api.get('/api/usuarios/me/stats'),
-  recomendadas: (limite = 10) => api.get('/api/usuarios/me/vagas/recomendadas', { params: { limite } }),
+  buscar:      ()              => api.get('/api/usuarios/me'),
+  atualizar:   (data)          => api.put('/api/usuarios/me', data),
+  stats:       ()              => api.get('/api/usuarios/me/stats'),
+  recomendacoes: (limite = 10) => api.get('/api/usuarios/me/recomendacoes', { params: { limite } }),
 }
 
 export const curriculoApi = {
@@ -49,12 +49,12 @@ export const vagaApi = {
 }
 
 export const candidaturaApi = {
-  listar:          (params)           => api.get('/api/usuarios/me/candidaturas', { params }),
-  listarPorStatus: (status)           => api.get(`/api/usuarios/me/candidaturas/status/${status}`),
-  buscar:          (id)               => api.get(`/api/usuarios/me/candidaturas/${id}`),
-  candidatar:      (data)             => api.post('/api/usuarios/me/candidaturas', data),
-  atualizarStatus: (id, status, obs)  => api.put(`/api/usuarios/me/candidaturas/${id}/status`, { status, observacao: obs }),
-  remover:         (id)               => api.delete(`/api/usuarios/me/candidaturas/${id}`),
+  listar:          (params)          => api.get('/api/usuarios/me/candidaturas', { params }),
+  listarPorStatus: (status)          => api.get(`/api/usuarios/me/candidaturas/status/${status}`),
+  buscar:          (id)              => api.get(`/api/usuarios/me/candidaturas/${id}`),
+  candidatar:      (data)            => api.post('/api/usuarios/me/candidaturas', data),
+  atualizarStatus: (id, status, obs) => api.put(`/api/usuarios/me/candidaturas/${id}/status`, { status, observacao: obs }),
+  remover:         (id)              => api.delete(`/api/usuarios/me/candidaturas/${id}`),
 }
 
 export const matchingApi = {
