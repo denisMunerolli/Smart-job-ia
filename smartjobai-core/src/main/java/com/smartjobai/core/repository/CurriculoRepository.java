@@ -10,9 +10,11 @@ public interface CurriculoRepository extends JpaRepository<Curriculo, Long> {
 
     List<Curriculo> findByUsuarioIdOrderByVersaoDesc(Long usuarioId);
 
-    List<Curriculo> findByUsuarioIdAndAtivoTrueOrderByVersaoDesc(Long usuarioId);
-
     Optional<Curriculo> findByIdAndUsuarioId(Long id, Long usuarioId);
 
-    boolean existsByUsuarioId(Long usuarioId);
+    Optional<Curriculo> findByUsuarioIdAndAtivoTrue(Long usuarioId);
+
+    boolean existsByUsuarioIdAndAtivoTrue(Long usuarioId);
+
+    long countByUsuarioId(Long usuarioId);
 }
