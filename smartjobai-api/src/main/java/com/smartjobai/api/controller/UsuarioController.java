@@ -35,17 +35,24 @@ public class UsuarioController {
 
     @GetMapping
     public Usuario buscar() {
-        return usuarioService.buscarPorEmail(SecurityUtils.getUsuarioAutenticadoEmail());
+        return usuarioService.buscarPerfilCompleto(SecurityUtils.getUsuarioAutenticadoEmail());
     }
 
     @PutMapping
     public Usuario atualizar(@RequestBody Usuario dados) {
-        return usuarioService.atualizar(SecurityUtils.getUsuarioAutenticadoEmail(), dados);
+        String email = SecurityUtils.getUsuarioAutenticadoEmail();
+        return usuarioService.atualizarPerfil(
+                email,
+                dados.getNome(),
+                dados.getLinkedinUrl(),
+                dados.getGithubUrl(),
+                dados.getPortfolioUrl()
+        );
     }
 
     /**
      * GET /api/usuarios/me/stats
-     * Retorna totais e candidaturas agrupadas por status.
+     * Totais de vagas, candidaturas, curriculos e agrupamento por status.
      */
     @GetMapping("/stats")
     public UsuarioStatsResponse stats() {
@@ -53,9 +60,9 @@ public class UsuarioController {
         Usuario usuario = usuarioService.buscarPorEmail(email);
         Long uid = usuario.getId();
 
-        long totalVagas = vagaService.contarTotal();
+        long totalVagas        = vagaService.contarTotal();
         long totalCandidaturas = candidaturaRepository.countByUsuarioId(uid);
-        long totalCurriculos = curriculoRepository.countByUsuarioId(uid);
+        long totalCurriculos   = curriculoRepository.countByUsuarioId(uid);
 
         Map<StatusCandidatura, Long> porStatus = new EnumMap<>(StatusCandidatura.class);
         candidaturaRepository.countGroupByStatus(uid)
@@ -65,14 +72,14 @@ public class UsuarioController {
                 totalVagas,
                 totalCandidaturas,
                 totalCurriculos,
-                0.0, // score medio calculado no frontend com base nas recomendacoes
+                0.0,
                 porStatus
         );
     }
 
     /**
      * GET /api/usuarios/me/vagas/recomendadas?limite=10
-     * Retorna vagas ordenadas por score TF-IDF do curriculo ativo.
+     * Top vagas rankeadas por score TF-IDF do curriculo ativo.
      */
     @GetMapping("/vagas/recomendadas")
     public List<VagaRecomendadaResponse> recomendadas(
