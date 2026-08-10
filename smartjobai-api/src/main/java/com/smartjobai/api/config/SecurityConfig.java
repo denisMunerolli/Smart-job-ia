@@ -73,7 +73,7 @@ public class SecurityConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         Server prodServer = new Server();
-        prodServer.setUrl("https://smartjobai-api-production.up.railway.app");
+        prodServer.setUrl("https://smartjobai-api-production-9e0b.up.railway.app");
         prodServer.setDescription("Servidor de Produção (Railway)");
 
         Server localServer = new Server();
