@@ -1,6 +1,8 @@
 package com.smartjobai.api.config;
 
 import com.smartjobai.api.security.JwtAuthenticationFilter;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.servers.Server;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -60,5 +64,22 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
+    }
+
+    /**
+     * Define explicitamente os servidores com HTTPS para evitar que o Swagger
+     * emita chamadas inseguras (http://) quando rodando no Railway.
+     */
+    @Bean
+    public OpenAPI customOpenAPI() {
+        Server prodServer = new Server();
+        prodServer.setUrl("https://smartjobai-api-production.up.railway.app");
+        prodServer.setDescription("Servidor de Produção (Railway)");
+
+        Server localServer = new Server();
+        localServer.setUrl("http://localhost:8080");
+        localServer.setDescription("Servidor Local");
+
+        return new OpenAPI().servers(List.of(prodServer, localServer));
     }
 }
