@@ -39,7 +39,7 @@ jobs:
       - name: Build
         working-directory: frontend
         env:
-          VITE_API_URL: https://smartjobai-api-production.up.railway.app
+          VITE_API_URL: https://smartjobai-api-production-9e0b.up.railway.app
         run: npm run build
 
       - name: Setup Pages
