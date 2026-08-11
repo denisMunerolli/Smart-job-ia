@@ -12,9 +12,6 @@ spring:
       ddl-auto: update
     open-in-view: false
     show-sql: false
-    properties:
-      hibernate:
-        format_sql: false
   flyway:
     enabled: true
     locations: classpath:db/migration
@@ -24,38 +21,36 @@ app:
   jwt:
     expirationMs: 86400000
 
-# CORS
 cors:
-  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173,http://localhost:8080,https://smartjobai-api-production.up.railway.app}
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173,http://localhost:8080}
 
-# Swagger UI
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
   server-url: ${SERVER_URL:}
 
-# Actuator
 management:
   endpoints:
     web:
       exposure:
-        include: health, info
+        include: health,info
 
-# ── Integrações de vagas ──────────────────────────────────────────────────────
-# Adzuna: obtenha credenciais em https://developer.adzuna.com/signup (gratuito)
-# Defina no Railway: ADZUNA_APP_ID e ADZUNA_APP_KEY
+# Adzuna - obtenha em https://developer.adzuna.com/signup
 adzuna:
   app-id: ${ADZUNA_APP_ID:}
   app-key: ${ADZUNA_APP_KEY:}
   country: ${ADZUNA_COUNTRY:br}
 
-# RSS: qualquer feed público de vagas (Programathor, etc.)
-# Defina no Railway: RSS_VAGAS_URL
+# RSS feed de vagas
 rss:
   vagas:
     url: ${RSS_VAGAS_URL:}
 
-# Termos e localização para o job de importação
+# Termos para importação automática
 import:
   termos: ${IMPORT_TERMOS:Java,Python,React,Spring Boot,Node.js}
   localizacao: ${IMPORT_LOCALIZACAO:Brasil}
+
+# Anthropic Claude AI - obtenha em https://console.anthropic.com
+anthropic:
+  api-key: ${ANTHROPIC_API_KEY:}
