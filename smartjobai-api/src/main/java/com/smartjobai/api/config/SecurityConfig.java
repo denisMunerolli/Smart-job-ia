@@ -30,13 +30,8 @@ public class SecurityConfig {
     private final CorsConfigurationSource corsConfigurationSource;
 
     private static final String[] SWAGGER_WHITELIST = {
-        "/v3/api-docs/**",
-        "/swagger-ui/**",
-        "/swagger-ui.html",
-        "/swagger-resources/**",
-        "/webjars/**",
-        "/docs",
-        "/docs/**"
+        "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
+        "/swagger-resources/**", "/webjars/**", "/docs", "/docs/**"
     };
 
     @Bean
@@ -44,13 +39,12 @@ public class SecurityConfig {
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource))
             .csrf(AbstractHttpConfigurer::disable)
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // Libera preflight CORS (OPTIONS) para todas as rotas - rebuild (OPTIONS) para todas as rotas
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(SWAGGER_WHITELIST).permitAll()
-                .requestMatchers("/actuator/health").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
@@ -71,15 +65,12 @@ public class SecurityConfig {
 
     @Bean
     public OpenAPI customOpenAPI() {
-        Server prodServer = new Server();
-        prodServer.setUrl("https://smartjobai-api-production.up.railway.app");
-        prodServer.setDescription("Servidor de Produção (Railway)");
-
-        Server localServer = new Server();
-        localServer.setUrl("http://localhost:8080");
-        localServer.setDescription("Servidor Local");
-
-        return new OpenAPI().servers(List.of(prodServer, localServer));
+        Server prod = new Server();
+        prod.setUrl("https://smartjobai-api-production-9e0b.up.railway.app");
+        prod.setDescription("Produção (Railway)");
+        Server local = new Server();
+        local.setUrl("http://localhost:8080");
+        local.setDescription("Local");
+        return new OpenAPI().servers(List.of(prod, local));
     }
 }
-
