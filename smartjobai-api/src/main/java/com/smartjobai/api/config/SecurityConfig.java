@@ -46,7 +46,7 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // Libera preflight CORS (OPTIONS) para todas as rotas
+                // Libera preflight CORS (OPTIONS) para todas as rotas - rebuild (OPTIONS) para todas as rotas
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(SWAGGER_WHITELIST).permitAll()
@@ -82,3 +82,4 @@ public class SecurityConfig {
         return new OpenAPI().servers(List.of(prodServer, localServer));
     }
 }
+
