@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom'
 import { perfilApi } from '../api'
 
 const STATUS_LABELS = {
-  PENDENTE:   { label: 'Pendente',    color: '#94a3b8' },
-  ENVIADA:    { label: 'Enviada',     color: '#3b82f6' },
-  EM_ANALISE: { label: 'Em análise',  color: '#f59e0b' },
-  ENTREVISTA: { label: 'Entrevista',  color: '#8b5cf6' },
-  APROVADA:   { label: 'Aprovada',    color: '#10b981' },
-  REPROVADA:  { label: 'Reprovada',   color: '#ef4444' },
-  DESISTENCIA:{ label: 'Desistência', color: '#f97316' },
+  PENDENTE:    { label: 'Pendente',    color: '#94a3b8' },
+  ENVIADA:     { label: 'Enviada',     color: '#3b82f6' },
+  EM_ANALISE:  { label: 'Em análise',  color: '#f59e0b' },
+  ENTREVISTA:  { label: 'Entrevista',  color: '#8b5cf6' },
+  APROVADA:    { label: 'Aprovada',    color: '#10b981' },
+  REPROVADA:   { label: 'Reprovada',   color: '#ef4444' },
+  DESISTENCIA: { label: 'Desistência', color: '#f97316' },
 }
 
 const NIVEL_COLOR = { ALTO: 'text-green-600', MEDIO: 'text-yellow-600', BAIXO: 'text-red-400' }
@@ -30,6 +30,7 @@ function DonutChart({ porStatus }) {
   if (total === 0) return <p className="text-gray-400 text-sm text-center py-4">Nenhuma candidatura ainda</p>
 
   let offset = 0
+  const circumference = 2 * Math.PI * 40
   const slices = entries.map(([k, v]) => {
     const pct = (v / total) * 100
     const slice = { key: k, pct, offset, color: STATUS_LABELS[k]?.color || '#cbd5e1', label: STATUS_LABELS[k]?.label || k, count: v }
@@ -37,15 +38,12 @@ function DonutChart({ porStatus }) {
     return slice
   })
 
-  const circumference = 2 * Math.PI * 40
   return (
     <div className="flex flex-col sm:flex-row items-center gap-6">
       <svg viewBox="0 0 100 100" className="w-32 h-32 flex-shrink-0">
         {slices.map(s => (
           <circle key={s.key} cx="50" cy="50" r="40"
-            fill="transparent"
-            stroke={s.color}
-            strokeWidth="18"
+            fill="transparent" stroke={s.color} strokeWidth="18"
             strokeDasharray={`${(s.pct / 100) * circumference} ${circumference}`}
             strokeDashoffset={-((s.offset / 100) * circumference)}
             transform="rotate(-90 50 50)"
@@ -67,18 +65,30 @@ function DonutChart({ porStatus }) {
 }
 
 export default function DashboardPage() {
-  const [stats, setStats]   = useState(null)
-  const [recs,  setRecs]    = useState([])
+  const [stats,   setStats]   = useState(null)
+  const [recs,    setRecs]    = useState([])
   const [loading, setLoading] = useState(true)
+  const [erro,    setErro]    = useState(null)
 
   useEffect(() => {
-    Promise.all([
-      perfilApi.stats(),
-      perfilApi.recomendadas(8),
-    ]).then(([s, r]) => {
-      setStats(s.data)
-      setRecs(r.data)
-    }).catch(() => {}).finally(() => setLoading(false))
+    async function carregar() {
+      try {
+        const statsRes = await perfilApi.stats()
+        setStats(statsRes.data)
+      } catch (e) {
+        console.error('Erro ao carregar stats:', e)
+      }
+
+      try {
+        const recsRes = await perfilApi.recomendacoes(8)
+        setRecs(recsRes.data || [])
+      } catch (e) {
+        console.error('Erro ao carregar recomendações:', e)
+      }
+
+      setLoading(false)
+    }
+    carregar()
   }, [])
 
   if (loading) return (
@@ -111,13 +121,11 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Gráfico de candidaturas por status */}
         <div className="card">
           <h3 className="font-semibold text-gray-900 mb-4">📊 Candidaturas por status</h3>
           <DonutChart porStatus={porStatus} />
         </div>
 
-        {/* Atalhos rápidos */}
         <div className="card flex flex-col gap-3">
           <h3 className="font-semibold text-gray-900 mb-1">⚡ Ações rápidas</h3>
           <Link to="/vagas" className="flex items-center gap-3 p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors">
@@ -144,7 +152,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Vagas recomendadas */}
       {recs.length > 0 && (
         <div className="card">
           <div className="flex justify-between items-center mb-4">
@@ -157,16 +164,12 @@ export default function DashboardPage() {
                 className="flex items-center justify-between gap-4 p-3 rounded-lg border border-gray-100 hover:border-blue-200 hover:bg-blue-50 transition-colors">
                 <div className="min-w-0">
                   <p className="font-medium text-gray-900 truncate">{v.titulo}</p>
-                  <p className="text-sm text-gray-500 truncate">{v.empresa} {v.localizacao ? `• ${v.localizacao}` : ''}</p>
+                  <p className="text-sm text-gray-500 truncate">{v.empresa}{v.localizacao ? ` • ${v.localizacao}` : ''}</p>
                 </div>
                 <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                  <span className={`text-sm font-bold ${NIVEL_COLOR[v.nivel] || 'text-gray-500'}`}>
-                    {v.scorePercentual}%
-                  </span>
+                  <span className={`text-sm font-bold ${NIVEL_COLOR[v.nivel] || 'text-gray-500'}`}>{v.scorePercentual}%</span>
                   <MiniBar pct={v.scorePercentual} nivel={v.nivel} />
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${NIVEL_BG[v.nivel]} ${NIVEL_COLOR[v.nivel]}`}>
-                    {v.nivel}
-                  </span>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${NIVEL_BG[v.nivel]} ${NIVEL_COLOR[v.nivel]}`}>{v.nivel}</span>
                 </div>
               </Link>
             ))}
