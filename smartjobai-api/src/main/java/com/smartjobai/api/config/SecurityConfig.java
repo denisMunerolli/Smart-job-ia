@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.servers.Server;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -45,6 +46,8 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                // Libera preflight CORS (OPTIONS) para todas as rotas
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(SWAGGER_WHITELIST).permitAll()
                 .requestMatchers("/actuator/health").permitAll()
@@ -66,14 +69,10 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    /**
-     * Define explicitamente os servidores com HTTPS para evitar que o Swagger
-     * emita chamadas inseguras (http://) quando rodando no Railway.
-     */
     @Bean
     public OpenAPI customOpenAPI() {
         Server prodServer = new Server();
-        prodServer.setUrl("https://smartjobai-api-production-9e0b.up.railway.app");
+        prodServer.setUrl("https://smartjobai-api-production.up.railway.app");
         prodServer.setDescription("Servidor de Produção (Railway)");
 
         Server localServer = new Server();
