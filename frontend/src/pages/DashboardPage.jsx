@@ -19,7 +19,7 @@ function MiniBar({ pct, nivel }) {
   const color = nivel === 'ALTO' ? '#10b981' : nivel === 'MEDIO' ? '#f59e0b' : '#ef4444'
   return (
     <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
-      <div style={{ width: `${pct}%`, background: color }} className="h-full rounded-full transition-all" />
+      <div style={{ width: `${pct}%`, background: color }} className="h-full rounded-full" />
     </div>
   )
 }
@@ -28,7 +28,6 @@ function DonutChart({ porStatus }) {
   const entries = Object.entries(porStatus).filter(([, v]) => v > 0)
   const total = entries.reduce((s, [, v]) => s + v, 0)
   if (total === 0) return <p className="text-gray-400 text-sm text-center py-4">Nenhuma candidatura ainda</p>
-
   let offset = 0
   const circumference = 2 * Math.PI * 40
   const slices = entries.map(([k, v]) => {
@@ -37,17 +36,15 @@ function DonutChart({ porStatus }) {
     offset += pct
     return slice
   })
-
   return (
     <div className="flex flex-col sm:flex-row items-center gap-6">
       <svg viewBox="0 0 100 100" className="w-32 h-32 flex-shrink-0">
         {slices.map(s => (
-          <circle key={s.key} cx="50" cy="50" r="40"
-            fill="transparent" stroke={s.color} strokeWidth="18"
+          <circle key={s.key} cx="50" cy="50" r="40" fill="transparent"
+            stroke={s.color} strokeWidth="18"
             strokeDasharray={`${(s.pct / 100) * circumference} ${circumference}`}
             strokeDashoffset={-((s.offset / 100) * circumference)}
-            transform="rotate(-90 50 50)"
-          />
+            transform="rotate(-90 50 50)" />
         ))}
         <text x="50" y="54" textAnchor="middle" fontSize="14" fontWeight="bold" fill="#1e293b">{total}</text>
       </svg>
@@ -65,30 +62,21 @@ function DonutChart({ porStatus }) {
 }
 
 export default function DashboardPage() {
-  const [stats,   setStats]   = useState(null)
-  const [recs,    setRecs]    = useState([])
+  const [stats, setStats]     = useState(null)
+  const [recs,  setRecs]      = useState([])
   const [loading, setLoading] = useState(true)
-  const [erro,    setErro]    = useState(null)
+  const [erroRecs, setErroRecs] = useState(false)
 
   useEffect(() => {
-    async function carregar() {
-      try {
-        const statsRes = await perfilApi.stats()
-        setStats(statsRes.data)
-      } catch (e) {
-        console.error('Erro ao carregar stats:', e)
-      }
+    // Buscar stats e recomendações de forma independente — erro em um não afeta o outro
+    perfilApi.stats()
+      .then(r => setStats(r.data))
+      .catch(() => setStats(null))
+      .finally(() => setLoading(false))
 
-      try {
-        const recsRes = await perfilApi.recomendacoes(8)
-        setRecs(recsRes.data || [])
-      } catch (e) {
-        console.error('Erro ao carregar recomendações:', e)
-      }
-
-      setLoading(false)
-    }
-    carregar()
+    perfilApi.recomendacoes(8)
+      .then(r => setRecs(r.data || []))
+      .catch(() => setErroRecs(true))
   }, [])
 
   if (loading) return (
@@ -108,51 +96,49 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         <Link to="/vagas" className="card hover:shadow-md transition-shadow bg-blue-50">
           <p className="text-sm font-medium text-blue-600 mb-1">Vagas disponíveis</p>
-          <p className="text-4xl font-bold text-blue-700">{stats?.totalVagas ?? 0}</p>
+          <p className="text-4xl font-bold text-blue-700">{stats?.totalVagas ?? '—'}</p>
         </Link>
         <Link to="/candidaturas" className="card hover:shadow-md transition-shadow bg-purple-50">
           <p className="text-sm font-medium text-purple-600 mb-1">Candidaturas</p>
-          <p className="text-4xl font-bold text-purple-700">{stats?.totalCandidaturas ?? 0}</p>
+          <p className="text-4xl font-bold text-purple-700">{stats?.totalCandidaturas ?? '—'}</p>
         </Link>
         <Link to="/curriculos" className="card hover:shadow-md transition-shadow bg-green-50">
           <p className="text-sm font-medium text-green-600 mb-1">Currículos</p>
-          <p className="text-4xl font-bold text-green-700">{stats?.totalCurriculos ?? 0}</p>
+          <p className="text-4xl font-bold text-green-700">{stats?.totalCurriculos ?? '—'}</p>
         </Link>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Gráfico de candidaturas */}
         <div className="card">
           <h3 className="font-semibold text-gray-900 mb-4">📊 Candidaturas por status</h3>
           <DonutChart porStatus={porStatus} />
         </div>
 
+        {/* Atalhos rápidos */}
         <div className="card flex flex-col gap-3">
           <h3 className="font-semibold text-gray-900 mb-1">⚡ Ações rápidas</h3>
           <Link to="/vagas" className="flex items-center gap-3 p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors">
             <span className="text-2xl">💼</span>
-            <div>
-              <p className="font-medium text-blue-800">Buscar vagas</p>
-              <p className="text-xs text-blue-600">Explore vagas de múltiplas fontes</p>
-            </div>
+            <div><p className="font-medium text-blue-800">Buscar vagas</p><p className="text-xs text-blue-600">Explore vagas de múltiplas fontes</p></div>
           </Link>
           <Link to="/matching" className="flex items-center gap-3 p-3 rounded-lg bg-purple-50 hover:bg-purple-100 transition-colors">
             <span className="text-2xl">🎯</span>
-            <div>
-              <p className="font-medium text-purple-800">Matching IA</p>
-              <p className="text-xs text-purple-600">Compare currículo com uma vaga</p>
-            </div>
+            <div><p className="font-medium text-purple-800">Matching IA</p><p className="text-xs text-purple-600">Análise multidimensional do seu perfil</p></div>
+          </Link>
+          <Link to="/otimizar" className="flex items-center gap-3 p-3 rounded-lg bg-orange-50 hover:bg-orange-100 transition-colors">
+            <span className="text-2xl">🤖</span>
+            <div><p className="font-medium text-orange-800">Otimizar CV com IA</p><p className="text-xs text-orange-600">Claude AI reescreve seu currículo para a vaga</p></div>
           </Link>
           <Link to="/curriculos" className="flex items-center gap-3 p-3 rounded-lg bg-green-50 hover:bg-green-100 transition-colors">
             <span className="text-2xl">📄</span>
-            <div>
-              <p className="font-medium text-green-800">Gerenciar currículos</p>
-              <p className="text-xs text-green-600">Crie e ative versões do seu currículo</p>
-            </div>
+            <div><p className="font-medium text-green-800">Gerenciar currículos</p><p className="text-xs text-green-600">Crie e ative versões do seu currículo</p></div>
           </Link>
         </div>
       </div>
 
-      {recs.length > 0 && (
+      {/* Vagas recomendadas */}
+      {!erroRecs && recs.length > 0 && (
         <div className="card">
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-semibold text-gray-900">🏆 Vagas recomendadas para você</h3>
@@ -174,6 +160,12 @@ export default function DashboardPage() {
               </Link>
             ))}
           </div>
+        </div>
+      )}
+
+      {erroRecs && (
+        <div className="card bg-yellow-50 border border-yellow-200">
+          <p className="text-yellow-700 text-sm">⚠️ Não foi possível carregar as recomendações. Cadastre um currículo ativo para ver sugestões de vagas.</p>
         </div>
       )}
     </div>
