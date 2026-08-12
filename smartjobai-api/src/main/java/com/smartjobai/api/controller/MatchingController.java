@@ -1,10 +1,10 @@
 package com.smartjobai.api.controller;
 
-import com.smartjobai.api.dto.MatchingRequest;
+import com.smartjobai.ai.similarity.MultiDimensionalMatcher;
 import com.smartjobai.api.dto.MatchingResult;
 import com.smartjobai.api.security.SecurityUtils;
 import com.smartjobai.api.service.MatchingService;
-import com.smartjobai.core.exception.BusinessException;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,25 +19,23 @@ public class MatchingController {
     private final MatchingService matchingService;
 
     @PostMapping
-    public MatchingResult comparar(@RequestBody MatchingRequest request) {
+    public MatchingResult calcular(@RequestBody MatchingRequest request) {
+        MultiDimensionalMatcher.MatchingDetalhado resultado;
 
-        MatchingService.MatchingResultData data;
-
-        boolean textoLivre = request.textoVaga() != null && !request.textoVaga().isBlank()
-                && request.textoCurriculo() != null && !request.textoCurriculo().isBlank();
-
-        boolean porIds = request.vagaId() != null && request.curriculoId() != null;
-
-        if (textoLivre) {
-            data = matchingService.matchTextoLivre(request.textoVaga(), request.textoCurriculo());
-        } else if (porIds) {
+        if (request.vagaId() != null && request.curriculoId() != null) {
             String email = SecurityUtils.getUsuarioAutenticadoEmail();
-            data = matchingService.matchPorIds(email, request.vagaId(), request.curriculoId());
+            resultado = matchingService.matchPorIds(email, request.vagaId(), request.curriculoId());
         } else {
-            throw new BusinessException(
-                    "Informe (textoVaga + textoCurriculo) ou (vagaId + curriculoId).");
+            resultado = matchingService.matchTextoLivre(request.textoVaga(), request.textoCurriculo());
         }
 
-        return MatchingResult.of(data.score(), data.habilidadesFaltantes());
+        return MatchingResult.from(resultado);
     }
+
+    public record MatchingRequest(
+            Long vagaId,
+            Long curriculoId,
+            String textoVaga,
+            String textoCurriculo
+    ) {}
 }
