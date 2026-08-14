@@ -1,15 +1,14 @@
--- Remove vagas sem descricao (mock antigo sem dados uteis)
-DELETE FROM vagas WHERE descricao IS NULL OR TRIM(descricao) = '';
+-- Remove vagas sem descricao (limpeza do mock antigo)
+DELETE FROM vagas WHERE (descricao IS NULL OR TRIM(CAST(descricao AS TEXT)) = '');
 
--- Remove seeds anteriores se existirem para evitar duplicatas
+-- Remove seeds anteriores para evitar duplicatas em rerun
 DELETE FROM vagas WHERE id_externo IN ('seed-001','seed-002','seed-003','seed-004','seed-005');
 
--- Insere vagas com descricao completa
+-- Insere 5 vagas com descricao completa para testes de matching
 INSERT INTO vagas (id_externo, fonte, titulo, empresa, descricao, localizacao, data_coleta, created_at, updated_at)
-VALUES
-
-('seed-001', 'mock', 'Junior Java Backend Developer', 'TechCorp',
-'We are looking for a Junior Java Backend Developer to join our engineering team.
+SELECT * FROM (VALUES
+  ('seed-001'::varchar, 'mock'::varchar, 'Junior Java Backend Developer'::varchar, 'TechCorp'::varchar,
+   'We are looking for a Junior Java Backend Developer to join our engineering team.
 
 Requirements:
 - Java 11+ and Spring Boot development experience
@@ -20,123 +19,104 @@ Requirements:
 - Object-Oriented Programming: interfaces, inheritance, generics
 - Exception handling and debugging skills
 - Maven for build management
-- Docker basics for containerization
+- Docker basics
 
-Preferred Qualifications:
+Preferred:
 - Microservices architecture experience
 - JUnit and Mockito for unit testing
-- Cloud deployment experience (AWS, Railway, Heroku)
-- SOLID principles understanding
+- Cloud deployment: AWS, Railway, Heroku
+- SOLID principles
 
-Benefits:
-- Remote work flexibility
-- Competitive salary
-- Learning and development budget
+Benefits: Remote work, competitive salary, learning budget.
+Bachelor degree in Software Engineering preferred. 1-2 years Java experience.'::text,
+   'Brasil (Remoto)'::varchar, NOW()::timestamp, NOW()::timestamp, NOW()::timestamp),
 
-Bachelor degree in Software Engineering or Computer Science preferred.
-1-2 years of experience with Java backend development.',
-'Brasil (Remoto)', NOW(), NOW(), NOW()),
+  ('seed-002', 'mock', 'Desenvolvedor Java Pleno', 'InovaTI',
+   'Buscamos Desenvolvedor Java Pleno para projetos de alta escala.
 
-('seed-002', 'mock', 'Desenvolvedor Java Pleno', 'InovaTI',
-'Buscamos Desenvolvedor Java Pleno para atuar em projetos de alta escala.
-
-Requisitos obrigatorios:
+Requisitos:
 - Java 17 com Spring Boot 3.x
 - Spring Data JPA e Hibernate
 - APIs REST e integracao com sistemas externos
-- Banco de dados PostgreSQL e SQL avancado
-- Git e metodologias ageis Scrum e Kanban
-- Docker e ambientes containerizados
-- Testes unitarios com JUnit 5 e Mockito
+- PostgreSQL e SQL avancado
+- Git, Scrum, Kanban
+- Docker
+- JUnit 5 e Mockito
 
-Requisitos desejaveis:
-- Experiencia com microservicos e mensageria Kafka e RabbitMQ
+Desejaveis:
+- Microservicos, Kafka, RabbitMQ
 - Kubernetes e CI/CD
 - Redis para cache
-- Clean Code e Design Patterns
 
-Beneficios:
-- Vale refeicao e alimentacao
-- Plano de saude e odontologico
-- Home office 3x por semana
+Beneficios: VR, VA, plano de saude, home office 3x.
+Graduacao em Engenharia de Software ou Ciencia da Computacao.',
+   'Sao Paulo, SP', NOW(), NOW(), NOW()),
 
-Formacao: Graduacao em Engenharia de Software, Ciencia da Computacao ou similar.',
-'Sao Paulo, SP', NOW(), NOW(), NOW()),
-
-('seed-003', 'mock', 'Backend Developer - Spring Boot', 'FinTech Brasil',
-'FinTech Brasil is hiring a Backend Developer specialized in Spring Boot.
+  ('seed-003', 'mock', 'Backend Developer Spring Boot', 'FinTech Brasil',
+   'FinTech Brasil is hiring a Backend Developer specialized in Spring Boot.
 
 Technical Requirements:
-- Strong Java 17 knowledge: OOP, Collections, Generics, Exception Handling
+- Java 17: OOP, Collections, Generics, Exception Handling
 - Spring Boot, Spring Security, Spring Data JPA
-- RESTful API development and best practices
-- Hibernate ORM and database migrations with Flyway
-- PostgreSQL and SQL query optimization
-- Maven or Gradle build tools
-- Git workflow and code review practices
-- Docker for local development and deployment
+- RESTful API best practices
+- Hibernate ORM and Flyway migrations
+- PostgreSQL and SQL optimization
+- Maven or Gradle
+- Git and code review
+- Docker
 
 Nice to have:
-- Event-driven architecture with Kafka
-- AWS or Azure cloud services
-- Performance testing and monitoring
-- JavaScript or TypeScript knowledge
+- Kafka messaging
+- AWS or Azure cloud
+- Performance monitoring
+- JavaScript or TypeScript
 
-About the role:
-You will work alongside senior engineers building financial APIs
-used by thousands of users. Production application experience is a plus.
+Education: Bachelor in Software Engineering. English: Intermediate.',
+   'Florianopolis, SC Hibrido', NOW(), NOW(), NOW()),
 
-Education: Bachelor in Software Engineering or equivalent experience.
-English: Intermediate reading level for technical documentation.',
-'Florianopolis, SC (Hibrido)', NOW(), NOW(), NOW()),
-
-('seed-004', 'mock', 'Java Developer - Microservices', 'CloudSoft',
-'CloudSoft is growing and needs a Java Developer with microservices experience.
+  ('seed-004', 'mock', 'Java Developer Microservices', 'CloudSoft',
+   'CloudSoft needs a Java Developer with microservices experience.
 
 Must Have:
 - Java 17 and Spring Boot 3
-- Microservices architecture design and implementation
-- REST APIs and API Gateway patterns
-- Spring Cloud with Eureka and Feign
-- PostgreSQL or MySQL databases
+- Microservices architecture
+- REST APIs and API Gateway
+- Spring Cloud: Eureka, Feign
+- PostgreSQL or MySQL
 - Docker and Kubernetes basics
-- JUnit 5 and Mockito for testing
-- Git and CI/CD pipelines
+- JUnit 5 and Mockito
+- Git and CI/CD
 
 Good to Have:
-- Apache Kafka or RabbitMQ messaging
-- Distributed tracing with Jaeger or Zipkin
-- Prometheus and Grafana monitoring
+- Kafka or RabbitMQ
+- Prometheus and Grafana
 - AWS ECS or GCP Cloud Run
 
 Benefits: 100% remote, flexible schedule, health insurance.
+2 years Java experience required.',
+   'Remoto Brasil', NOW(), NOW(), NOW()),
 
-Software Engineering degree preferred. 2 years Java experience required.',
-'Remoto (Brasil)', NOW(), NOW(), NOW()),
+  ('seed-005', 'mock', 'Engenheiro de Software Backend Java', 'Startup XYZ',
+   'Startup XYZ busca Engenheiro de Software Backend com foco em Java.
 
-('seed-005', 'mock', 'Engenheiro de Software Backend - Java', 'Startup XYZ',
-'Startup XYZ busca Engenheiro de Software Backend com foco em Java.
-
-Stack principal:
+Stack:
 - Java 17 com Spring Boot e Spring Data JPA
-- Hibernate e migrations com Flyway
-- PostgreSQL como banco principal
-- APIs RESTful documentadas com Swagger e OpenAPI
-- Maven para gerenciamento de dependencias
-- Git com GitFlow
-- Docker para containerizacao
+- Hibernate e Flyway migrations
+- PostgreSQL
+- APIs RESTful com Swagger e OpenAPI
+- Maven, Git, Docker
 
-Diferenciais valorizados:
-- Testes automatizados com JUnit 5 e Mockito
-- Conhecimento de Redis para cache
-- CI/CD com GitHub Actions ou Jenkins
-- Deploy em cloud AWS, GCP, Railway ou Heroku
-- Node.js ou JavaScript como stack secundaria
+Diferenciais:
+- JUnit 5 e Mockito
+- Redis para cache
+- CI/CD com GitHub Actions
+- Deploy em cloud: AWS, GCP, Railway, Heroku
+- Node.js ou JavaScript
 
-Sobre a vaga:
 Voce vai construir APIs para aplicacoes mobile e web.
-Trabalhamos com metodologia agil, code review e cultura de aprendizado continuo.
+Metodologia agil, code review e aprendizado continuo.
 
-Requisitos: Graduacao em Engenharia de Software ou areas correlatas.
-Ingles tecnico para leitura de documentacao.',
-'Florianopolis, SC ou Remoto', NOW(), NOW(), NOW());
+Requisitos: Graduacao em Engenharia de Software.
+Ingles tecnico.',
+   'Florianopolis SC ou Remoto', NOW(), NOW(), NOW())
+) AS t(id_externo, fonte, titulo, empresa, descricao, localizacao, data_coleta, created_at, updated_at);
