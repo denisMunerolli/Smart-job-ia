@@ -1,14 +1,14 @@
--- Remove vagas sem descricao (limpeza do mock antigo)
-DELETE FROM vagas WHERE (descricao IS NULL OR TRIM(CAST(descricao AS TEXT)) = '');
+-- Limpa vagas sem descricao do mock antigo
+DELETE FROM vagas WHERE descricao IS NULL;
+DELETE FROM vagas WHERE descricao = '';
 
--- Remove seeds anteriores para evitar duplicatas em rerun
+-- Remove seeds anteriores para evitar duplicatas
 DELETE FROM vagas WHERE id_externo IN ('seed-001','seed-002','seed-003','seed-004','seed-005');
 
--- Insere 5 vagas com descricao completa para testes de matching
+-- Vaga 1
 INSERT INTO vagas (id_externo, fonte, titulo, empresa, descricao, localizacao, data_coleta, created_at, updated_at)
-SELECT * FROM (VALUES
-  ('seed-001'::varchar, 'mock'::varchar, 'Junior Java Backend Developer'::varchar, 'TechCorp'::varchar,
-   'We are looking for a Junior Java Backend Developer to join our engineering team.
+VALUES ('seed-001', 'mock', 'Junior Java Backend Developer', 'TechCorp',
+'We are looking for a Junior Java Backend Developer to join our engineering team.
 
 Requirements:
 - Java 11+ and Spring Boot development experience
@@ -28,11 +28,13 @@ Preferred:
 - SOLID principles
 
 Benefits: Remote work, competitive salary, learning budget.
-Bachelor degree in Software Engineering preferred. 1-2 years Java experience.'::text,
-   'Brasil (Remoto)'::varchar, NOW()::timestamp, NOW()::timestamp, NOW()::timestamp),
+Bachelor degree in Software Engineering preferred. 1-2 years Java experience.',
+'Brasil (Remoto)', NOW(), NOW(), NOW());
 
-  ('seed-002', 'mock', 'Desenvolvedor Java Pleno', 'InovaTI',
-   'Buscamos Desenvolvedor Java Pleno para projetos de alta escala.
+-- Vaga 2
+INSERT INTO vagas (id_externo, fonte, titulo, empresa, descricao, localizacao, data_coleta, created_at, updated_at)
+VALUES ('seed-002', 'mock', 'Desenvolvedor Java Pleno', 'InovaTI',
+'Buscamos Desenvolvedor Java Pleno para projetos de alta escala.
 
 Requisitos:
 - Java 17 com Spring Boot 3.x
@@ -50,10 +52,12 @@ Desejaveis:
 
 Beneficios: VR, VA, plano de saude, home office 3x.
 Graduacao em Engenharia de Software ou Ciencia da Computacao.',
-   'Sao Paulo, SP', NOW(), NOW(), NOW()),
+'Sao Paulo, SP', NOW(), NOW(), NOW());
 
-  ('seed-003', 'mock', 'Backend Developer Spring Boot', 'FinTech Brasil',
-   'FinTech Brasil is hiring a Backend Developer specialized in Spring Boot.
+-- Vaga 3
+INSERT INTO vagas (id_externo, fonte, titulo, empresa, descricao, localizacao, data_coleta, created_at, updated_at)
+VALUES ('seed-003', 'mock', 'Backend Developer Spring Boot', 'FinTech Brasil',
+'FinTech Brasil is hiring a Backend Developer specialized in Spring Boot.
 
 Technical Requirements:
 - Java 17: OOP, Collections, Generics, Exception Handling
@@ -72,10 +76,12 @@ Nice to have:
 - JavaScript or TypeScript
 
 Education: Bachelor in Software Engineering. English: Intermediate.',
-   'Florianopolis, SC Hibrido', NOW(), NOW(), NOW()),
+'Florianopolis, SC Hibrido', NOW(), NOW(), NOW());
 
-  ('seed-004', 'mock', 'Java Developer Microservices', 'CloudSoft',
-   'CloudSoft needs a Java Developer with microservices experience.
+-- Vaga 4
+INSERT INTO vagas (id_externo, fonte, titulo, empresa, descricao, localizacao, data_coleta, created_at, updated_at)
+VALUES ('seed-004', 'mock', 'Java Developer Microservices', 'CloudSoft',
+'CloudSoft needs a Java Developer with microservices experience.
 
 Must Have:
 - Java 17 and Spring Boot 3
@@ -94,10 +100,12 @@ Good to Have:
 
 Benefits: 100% remote, flexible schedule, health insurance.
 2 years Java experience required.',
-   'Remoto Brasil', NOW(), NOW(), NOW()),
+'Remoto Brasil', NOW(), NOW(), NOW());
 
-  ('seed-005', 'mock', 'Engenheiro de Software Backend Java', 'Startup XYZ',
-   'Startup XYZ busca Engenheiro de Software Backend com foco em Java.
+-- Vaga 5
+INSERT INTO vagas (id_externo, fonte, titulo, empresa, descricao, localizacao, data_coleta, created_at, updated_at)
+VALUES ('seed-005', 'mock', 'Engenheiro de Software Backend Java', 'Startup XYZ',
+'Startup XYZ busca Engenheiro de Software Backend com foco em Java.
 
 Stack:
 - Java 17 com Spring Boot e Spring Data JPA
@@ -113,10 +121,7 @@ Diferenciais:
 - Deploy em cloud: AWS, GCP, Railway, Heroku
 - Node.js ou JavaScript
 
-Voce vai construir APIs para aplicacoes mobile e web.
 Metodologia agil, code review e aprendizado continuo.
-
 Requisitos: Graduacao em Engenharia de Software.
 Ingles tecnico.',
-   'Florianopolis SC ou Remoto', NOW(), NOW(), NOW())
-) AS t(id_externo, fonte, titulo, empresa, descricao, localizacao, data_coleta, created_at, updated_at);
+'Florianopolis SC ou Remoto', NOW(), NOW(), NOW());
