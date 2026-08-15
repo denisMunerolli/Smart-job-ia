@@ -1,10 +1,7 @@
 package com.smartjobai.api.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
-@Data
-@AllArgsConstructor
-public class AuthResponse {
-    private String accessToken;
-}
+public record AuthResponse(
+        String accessToken,
+        String refreshToken,
+        long expiresIn
+) {}
