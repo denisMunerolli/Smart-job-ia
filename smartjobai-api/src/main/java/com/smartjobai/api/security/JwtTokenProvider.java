@@ -21,8 +21,11 @@ public class JwtTokenProvider {
     @Value("${app.jwt.secret}")
     private String jwtSecret;
 
-    @Value("${app.jwt.expirationMs}")
-    private long jwtExpirationMs;
+    @Value("${app.jwt.expirationMs:604800000}")
+    private long jwtExpirationMs; // 7 dias por padrão
+
+    @Value("${app.jwt.refreshExpirationMs:2592000000}")
+    private long refreshExpirationMs; // 30 dias por padrão
 
     private SecretKey secretKey;
 
@@ -31,15 +34,29 @@ public class JwtTokenProvider {
         this.secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 
+    /** Gera access token (7 dias) */
     public String generateToken(Authentication authentication) {
-        String username = authentication.getName();
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
+        return buildToken(authentication.getName(), jwtExpirationMs);
+    }
 
+    /** Gera refresh token (30 dias) */
+    public String generateRefreshToken(Authentication authentication) {
+        return buildToken(authentication.getName(), refreshExpirationMs);
+    }
+
+    /** Gera novo access token a partir de um refresh token válido */
+    public String refreshAccessToken(String refreshToken) {
+        String email = getUsernameFromToken(refreshToken);
+        return buildToken(email, jwtExpirationMs);
+    }
+
+    private String buildToken(String subject, long expirationMs) {
+        Date now    = new Date();
+        Date expiry = new Date(now.getTime() + expirationMs);
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(subject)
                 .setIssuedAt(now)
-                .setExpiration(expiryDate)
+                .setExpiration(expiry)
                 .signWith(secretKey, SignatureAlgorithm.HS512)
                 .compact();
     }
@@ -61,5 +78,9 @@ public class JwtTokenProvider {
             log.warn("Token JWT inválido: {}", e.getMessage());
         }
         return false;
+    }
+
+    public long getExpirationMs() {
+        return jwtExpirationMs;
     }
 }
