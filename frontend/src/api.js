@@ -11,12 +11,55 @@ api.interceptors.request.use(config => {
   return config
 })
 
+let isRefreshing = false
+let queue = []
+
 api.interceptors.response.use(
   res => res,
-  err => {
-    if (err.response?.status === 401) {
+  async err => {
+    const original = err.config
+    if (err.response?.status === 401 && !original._retry) {
+      original._retry = true
+
+      if (isRefreshing) {
+        // Aguarda o refresh em andamento
+        return new Promise((resolve, reject) => {
+          queue.push({ resolve, reject })
+        }).then(token => {
+          original.headers.Authorization = `Bearer ${token}`
+          return api(original)
+        })
+      }
+
+      isRefreshing = true
+      const refreshToken = localStorage.getItem('refreshToken')
+
+      if (refreshToken) {
+        try {
+          const { data } = await axios.post(
+            `${import.meta.env.VITE_API_URL || ''}/api/auth/refresh`,
+            { refreshToken }
+          )
+          const newToken = data.accessToken
+          localStorage.setItem('token', newToken)
+          if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken)
+          api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`
+          queue.forEach(p => p.resolve(newToken))
+          queue = []
+          isRefreshing = false
+          original.headers.Authorization = `Bearer ${newToken}`
+          return api(original)
+        } catch {
+          queue.forEach(p => p.reject())
+          queue = []
+          isRefreshing = false
+        }
+      }
+
+      // Refresh falhou — redireciona para login
       localStorage.removeItem('token')
-      window.location.href = '/login'
+      localStorage.removeItem('refreshToken')
+      window.location.href = '/Smart-job-ia/login'
     }
     return Promise.reject(err)
   }
@@ -25,13 +68,14 @@ api.interceptors.response.use(
 export const authApi = {
   login:    (email, senha)       => api.post('/api/auth/login', { email, senha }),
   register: (email, senha, nome) => api.post('/api/auth/register', { email, senha, nome }),
+  refresh:  (refreshToken)       => api.post('/api/auth/refresh', { refreshToken }),
 }
 
 export const perfilApi = {
-  buscar:      ()              => api.get('/api/usuarios/me'),
-  atualizar:   (data)          => api.put('/api/usuarios/me', data),
-  stats:       ()              => api.get('/api/usuarios/me/stats'),
-  recomendacoes: (limite = 10) => api.get('/api/usuarios/me/recomendacoes', { params: { limite } }),
+  buscar:       ()              => api.get('/api/usuarios/me'),
+  atualizar:    (data)          => api.put('/api/usuarios/me', data),
+  stats:        ()              => api.get('/api/usuarios/me/stats'),
+  recomendacoes:(limite = 10)   => api.get('/api/usuarios/me/recomendacoes', { params: { limite } }),
 }
 
 export const curriculoApi = {
