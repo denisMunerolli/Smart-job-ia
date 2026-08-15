@@ -2,14 +2,11 @@ package com.smartjobai.api.controller;
 
 import com.smartjobai.api.dto.AuthRequest;
 import com.smartjobai.api.dto.AuthResponse;
-import com.smartjobai.api.dto.UsuarioRegistroRequest;
-import com.smartjobai.api.dto.UsuarioResponse;
 import com.smartjobai.api.security.JwtTokenProvider;
 import com.smartjobai.core.entity.Usuario;
 import com.smartjobai.core.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,21 +28,36 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getSenha())
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = tokenProvider.generateToken(authentication);
-        return ResponseEntity.ok(new AuthResponse(token));
+        Authentication auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getSenha()));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        String accessToken  = tokenProvider.generateToken(auth);
+        String refreshToken = tokenProvider.generateRefreshToken(auth);
+        return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken, tokenProvider.getExpirationMs()));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UsuarioResponse> register(@Valid @RequestBody UsuarioRegistroRequest request) {
-        Usuario usuario = new Usuario();
-        usuario.setEmail(request.email());
-        usuario.setSenha(request.senha());
-        usuario.setNome(request.nome());
-        Usuario salvo = usuarioService.cadastrar(usuario);
-        return ResponseEntity.status(HttpStatus.CREATED).body(UsuarioResponse.resumo(salvo));
+    public ResponseEntity<Usuario> register(@Valid @RequestBody Usuario usuario) {
+        return ResponseEntity.ok(usuarioService.cadastrar(usuario));
     }
+
+    /**
+     * POST /api/auth/refresh
+     * Recebe o refresh token e retorna um novo access token.
+     * Evita que o usuário precise fazer login novamente.
+     */
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshRequest request) {
+        try {
+            if (!tokenProvider.validateToken(request.refreshToken())) {
+                return ResponseEntity.status(401).build();
+            }
+            String newAccessToken = tokenProvider.refreshAccessToken(request.refreshToken());
+            return ResponseEntity.ok(new AuthResponse(newAccessToken, request.refreshToken(), tokenProvider.getExpirationMs()));
+        } catch (Exception e) {
+            return ResponseEntity.status(401).build();
+        }
+    }
+
+    public record RefreshRequest(String refreshToken) {}
 }
