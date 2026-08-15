@@ -6,7 +6,7 @@ DELETE FROM vagas WHERE descricao = '';
 DELETE FROM vagas WHERE id_externo IN ('seed-001','seed-002','seed-003','seed-004','seed-005');
 
 -- Vaga 1
-INSERT INTO vagas (id_externo, fonte, titulo, empresa, descricao, localizacao, data_coleta, created_at, updated_at)
+INSERT INTO vagas (id_externo, fonte, titulo, empresa, descricao, localizacao, data_coleta, data_criacao, data_atualizacao)
 VALUES ('seed-001', 'mock', 'Junior Java Backend Developer', 'TechCorp',
 'We are looking for a Junior Java Backend Developer to join our engineering team.
 
@@ -32,7 +32,7 @@ Bachelor degree in Software Engineering preferred. 1-2 years Java experience.',
 'Brasil (Remoto)', NOW(), NOW(), NOW());
 
 -- Vaga 2
-INSERT INTO vagas (id_externo, fonte, titulo, empresa, descricao, localizacao, data_coleta, created_at, updated_at)
+INSERT INTO vagas (id_externo, fonte, titulo, empresa, descricao, localizacao, data_coleta, data_criacao, data_atualizacao)
 VALUES ('seed-002', 'mock', 'Desenvolvedor Java Pleno', 'InovaTI',
 'Buscamos Desenvolvedor Java Pleno para projetos de alta escala.
 
@@ -55,7 +55,7 @@ Graduacao em Engenharia de Software ou Ciencia da Computacao.',
 'Sao Paulo, SP', NOW(), NOW(), NOW());
 
 -- Vaga 3
-INSERT INTO vagas (id_externo, fonte, titulo, empresa, descricao, localizacao, data_coleta, created_at, updated_at)
+INSERT INTO vagas (id_externo, fonte, titulo, empresa, descricao, localizacao, data_coleta, data_criacao, data_atualizacao)
 VALUES ('seed-003', 'mock', 'Backend Developer Spring Boot', 'FinTech Brasil',
 'FinTech Brasil is hiring a Backend Developer specialized in Spring Boot.
 
@@ -79,7 +79,7 @@ Education: Bachelor in Software Engineering. English: Intermediate.',
 'Florianopolis, SC Hibrido', NOW(), NOW(), NOW());
 
 -- Vaga 4
-INSERT INTO vagas (id_externo, fonte, titulo, empresa, descricao, localizacao, data_coleta, created_at, updated_at)
+INSERT INTO vagas (id_externo, fonte, titulo, empresa, descricao, localizacao, data_coleta, data_criacao, data_atualizacao)
 VALUES ('seed-004', 'mock', 'Java Developer Microservices', 'CloudSoft',
 'CloudSoft needs a Java Developer with microservices experience.
 
@@ -103,7 +103,7 @@ Benefits: 100% remote, flexible schedule, health insurance.
 'Remoto Brasil', NOW(), NOW(), NOW());
 
 -- Vaga 5
-INSERT INTO vagas (id_externo, fonte, titulo, empresa, descricao, localizacao, data_coleta, created_at, updated_at)
+INSERT INTO vagas (id_externo, fonte, titulo, empresa, descricao, localizacao, data_coleta, data_criacao, data_atualizacao)
 VALUES ('seed-005', 'mock', 'Engenheiro de Software Backend Java', 'Startup XYZ',
 'Startup XYZ busca Engenheiro de Software Backend com foco em Java.
 
