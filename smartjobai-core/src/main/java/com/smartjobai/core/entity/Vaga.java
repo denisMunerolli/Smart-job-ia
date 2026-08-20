@@ -25,10 +25,10 @@ public class Vaga extends EntidadeBase {
     @Column(name = "id_externo")
     private String idExterno;
 
+    /** Fonte da vaga: adzuna, remoteok, mock, rss */
     private String fonte;
 
     private String titulo;
-
     private String empresa;
 
     @Column(columnDefinition = "TEXT")
@@ -38,4 +38,20 @@ public class Vaga extends EntidadeBase {
 
     @Column(name = "data_coleta")
     private LocalDateTime dataColeta;
+
+    /** URL original da vaga no site de origem */
+    @Column(name = "url_origem")
+    private String urlOrigem;
+
+    /** Nome legível da fonte para exibição */
+    public String getFonteLabel() {
+        if (fonte == null) return "Desconhecida";
+        return switch (fonte.toLowerCase()) {
+            case "adzuna"   -> "Adzuna";
+            case "remoteok" -> "RemoteOK";
+            case "rss"      -> "RSS Feed";
+            case "mock"     -> "Demonstração";
+            default         -> fonte;
+        };
+    }
 }
