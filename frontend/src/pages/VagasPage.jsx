@@ -2,6 +2,23 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { vagaApi } from '../api'
 
+const FONTE_CONFIG = {
+  adzuna:   { label: 'Adzuna',        color: 'bg-blue-100 text-blue-700',   icon: '🔍' },
+  remoteok: { label: 'RemoteOK',      color: 'bg-green-100 text-green-700', icon: '🌍' },
+  rss:      { label: 'RSS Feed',      color: 'bg-orange-100 text-orange-700', icon: '📡' },
+  mock:     { label: 'Demonstração',  color: 'bg-gray-100 text-gray-500',   icon: '🧪' },
+}
+
+function FonteBadge({ fonte }) {
+  const cfg = FONTE_CONFIG[fonte?.toLowerCase()] || { label: fonte || 'Desconhecida', color: 'bg-gray-100 text-gray-500', icon: '📋' }
+  return (
+    <span className={`px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1 ${cfg.color}`}>
+      <span>{cfg.icon}</span>
+      <span>{cfg.label}</span>
+    </span>
+  )
+}
+
 export default function VagasPage() {
   const [vagas, setVagas]     = useState([])
   const [total, setTotal]     = useState(0)
@@ -38,8 +55,7 @@ export default function VagasPage() {
             <input key={f.key} className="input" placeholder={f.placeholder}
               value={filtros[f.key]}
               onChange={e => setFiltros(v => ({ ...v, [f.key]: e.target.value }))}
-              onKeyDown={e => e.key === 'Enter' && buscar(0)}
-            />
+              onKeyDown={e => e.key === 'Enter' && buscar(0)} />
           ))}
         </div>
         <button className="btn-primary mt-4 w-full sm:w-auto" onClick={() => buscar(0)}>
@@ -54,9 +70,7 @@ export default function VagasPage() {
       {!loading && vagas.length === 0 && (
         <div className="card text-center py-10">
           <p className="text-gray-400 text-lg">Nenhuma vaga encontrada.</p>
-          <p className="text-gray-400 text-sm mt-1">
-            Tente outros filtros ou aguarde a importação automática (6h e 18h).
-          </p>
+          <p className="text-gray-400 text-sm mt-1">Tente outros filtros ou aguarde a importação automática.</p>
         </div>
       )}
 
@@ -66,38 +80,38 @@ export default function VagasPage() {
             className="card hover:shadow-md transition-shadow block group">
             <div className="flex justify-between items-start gap-3">
               <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <h3 className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors truncate">
+                <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                  <h3 className="font-semibold text-gray-900 group-hover:text-blue-700 transition-colors">
                     {v.titulo || 'Sem título'}
                   </h3>
-                  <span className="text-xs text-gray-400 flex-shrink-0">#{v.id}</span>
+                  <span className="text-xs text-gray-400">#{v.id}</span>
                 </div>
-                <p className="text-sm text-gray-500">
-                  {v.empresa || 'Empresa não informada'}
-                  {v.localizacao ? ` • ${v.localizacao}` : ''}
-                </p>
+                <div className="flex items-center gap-2 flex-wrap text-sm text-gray-500">
+                  {v.empresa && <span className="font-medium text-gray-700">{v.empresa}</span>}
+                  {v.empresa && v.localizacao && <span>·</span>}
+                  {v.localizacao && <span>{v.localizacao}</span>}
+                </div>
               </div>
-              <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                {v.fonte && (
-                  <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
-                    {v.fonte}
-                  </span>
+              <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+                <FonteBadge fonte={v.fonte} />
+                {v.urlOrigem && (
+                  <a href={v.urlOrigem} target="_blank" rel="noopener noreferrer"
+                    onClick={e => e.stopPropagation()}
+                    className="text-xs text-blue-500 hover:text-blue-700 hover:underline">
+                    Ver original ↗
+                  </a>
                 )}
               </div>
             </div>
-
             {v.descricao ? (
               <p className="text-sm text-gray-600 mt-2 line-clamp-2">{v.descricao}</p>
             ) : (
-              <p className="text-xs text-gray-400 mt-2 italic">
-                Sem descrição — clique para ver detalhes e calcular matching.
-              </p>
+              <p className="text-xs text-gray-400 mt-2 italic">Sem descrição — clique para ver detalhes.</p>
             )}
           </Link>
         ))}
       </div>
 
-      {/* Paginação */}
       <div className="flex items-center gap-3 mt-6">
         {page > 0 && (
           <button className="btn-secondary" onClick={() => buscar(page - 1)}>← Anterior</button>
