@@ -41,31 +41,33 @@ public class PerfilController {
     @GetMapping
     public UsuarioResponse perfilCompleto() {
         String email = SecurityUtils.getUsuarioAutenticadoEmail();
-        Usuario usuario = usuarioService.buscarPerfilCompleto(email);
-        return UsuarioResponse.perfilCompleto(usuario);
+        return UsuarioResponse.perfilCompleto(usuarioService.buscarPerfilCompleto(email));
     }
 
     @PutMapping
-    public UsuarioResponse atualizarPerfil(@Valid @RequestBody AtualizarPerfilRequest request) {
+    public UsuarioResponse atualizarPerfil(@Valid @RequestBody AtualizarPerfilRequest req) {
         String email = SecurityUtils.getUsuarioAutenticadoEmail();
-        Usuario usuario = usuarioService.atualizarPerfil(
-                email, request.nome(), request.linkedinUrl(),
-                request.githubUrl(), request.portfolioUrl());
-        return UsuarioResponse.resumo(usuario);
+        return UsuarioResponse.resumo(usuarioService.atualizarPerfil(
+                email, req.nome(), req.linkedinUrl(), req.githubUrl(), req.portfolioUrl()));
     }
 
-    /**
-     * DELETE /api/usuarios/me
-     * Exclui permanentemente a conta. Requer confirmação da senha.
-     */
+    /** PUT /api/usuarios/me/senha */
+    @PutMapping("/senha")
+    public ResponseEntity<Map<String, String>> alterarSenha(
+            @RequestBody AlterarSenhaRequest req) {
+        String email = SecurityUtils.getUsuarioAutenticadoEmail();
+        usuarioService.alterarSenha(email, req.senhaAtual(), req.novaSenha());
+        return ResponseEntity.ok(Map.of("mensagem", "Senha alterada com sucesso."));
+    }
+
+    /** DELETE /api/usuarios/me */
     @DeleteMapping
     public ResponseEntity<Map<String, String>> deletarConta(
-            @RequestBody DeletarContaRequest request) {
+            @RequestBody DeletarContaRequest req) {
         String email = SecurityUtils.getUsuarioAutenticadoEmail();
-        usuarioService.deletarConta(email, request.senha());
+        usuarioService.deletarConta(email, req.senha());
         return ResponseEntity.ok(Map.of(
-            "mensagem", "Conta excluída com sucesso. Todos os seus dados foram removidos."
-        ));
+            "mensagem", "Conta excluída. Todos os seus dados foram removidos."));
     }
 
     /** GET /api/usuarios/me/stats */
@@ -74,38 +76,29 @@ public class PerfilController {
         String email = SecurityUtils.getUsuarioAutenticadoEmail();
         Usuario usuario = usuarioService.buscarPorEmail(email);
         Long uid = usuario.getId();
-
         long totalVagas        = vagaService.contarTotal();
         long totalCandidaturas = candidaturaRepository.countByUsuarioId(uid);
         long totalCurriculos   = curriculoRepository.countByUsuarioId(uid);
-
         Map<StatusCandidatura, Long> porStatus = new EnumMap<>(StatusCandidatura.class);
         candidaturaRepository.countGroupByStatus(uid)
                 .forEach(row -> porStatus.put((StatusCandidatura) row[0], (Long) row[1]));
-
-        return new UsuarioStatsResponse(
-                totalVagas, totalCandidaturas, totalCurriculos, 0.0, porStatus);
+        return new UsuarioStatsResponse(totalVagas, totalCandidaturas, totalCurriculos, 0.0, porStatus);
     }
 
-    /** GET /api/usuarios/me/recomendacoes?limite=10 */
+    /** GET /api/usuarios/me/recomendacoes */
     @GetMapping("/recomendacoes")
     public List<VagaRecomendadaResponse> recomendacoes(
             @RequestParam(defaultValue = "10") int limite) {
         String email = SecurityUtils.getUsuarioAutenticadoEmail();
         return matchingService.recomendarVagas(email, Math.min(limite, 50))
-                .stream()
-                .map(d -> VagaRecomendadaResponse.from(d.vaga(), d.score()))
-                .toList();
+                .stream().map(d -> VagaRecomendadaResponse.from(d.vaga(), d.score())).toList();
     }
 
     public record AtualizarPerfilRequest(
-            @NotBlank String nome,
-            String linkedinUrl,
-            String githubUrl,
-            String portfolioUrl
-    ) {}
+            @NotBlank String nome, String linkedinUrl, String githubUrl, String portfolioUrl) {}
 
-    public record DeletarContaRequest(
-            @NotBlank String senha
-    ) {}
+    public record AlterarSenhaRequest(
+            @NotBlank String senhaAtual, @NotBlank String novaSenha) {}
+
+    public record DeletarContaRequest(@NotBlank String senha) {}
 }
