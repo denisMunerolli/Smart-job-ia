@@ -54,8 +54,28 @@ public class UsuarioService {
     }
 
     /**
-     * Exclui permanentemente a conta do usuário e todos os dados associados.
-     * Requer confirmação da senha para evitar exclusões acidentais.
+     * Altera a senha do usuário.
+     * Requer a senha atual para confirmar identidade.
+     */
+    @Transactional
+    public void alterarSenha(String email, String senhaAtual, String novaSenha) {
+        if (novaSenha == null || novaSenha.length() < 8) {
+            throw new BusinessException("A nova senha deve ter pelo menos 8 caracteres.");
+        }
+        Usuario usuario = buscarPorEmail(email);
+        if (!passwordEncoder.matches(senhaAtual, usuario.getSenha())) {
+            throw new BusinessException("Senha atual incorreta.");
+        }
+        if (passwordEncoder.matches(novaSenha, usuario.getSenha())) {
+            throw new BusinessException("A nova senha deve ser diferente da senha atual.");
+        }
+        usuario.setSenha(passwordEncoder.encode(novaSenha));
+        repository.save(usuario);
+    }
+
+    /**
+     * Exclui permanentemente a conta e todos os dados associados.
+     * Requer confirmação da senha.
      */
     @Transactional
     public void deletarConta(String email, String senhaConfirmacao) {
