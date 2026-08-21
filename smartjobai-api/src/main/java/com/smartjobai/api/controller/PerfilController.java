@@ -14,6 +14,8 @@ import com.smartjobai.core.service.VagaService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,8 +49,23 @@ public class PerfilController {
     public UsuarioResponse atualizarPerfil(@Valid @RequestBody AtualizarPerfilRequest request) {
         String email = SecurityUtils.getUsuarioAutenticadoEmail();
         Usuario usuario = usuarioService.atualizarPerfil(
-                email, request.nome(), request.linkedinUrl(), request.githubUrl(), request.portfolioUrl());
+                email, request.nome(), request.linkedinUrl(),
+                request.githubUrl(), request.portfolioUrl());
         return UsuarioResponse.resumo(usuario);
+    }
+
+    /**
+     * DELETE /api/usuarios/me
+     * Exclui permanentemente a conta. Requer confirmação da senha.
+     */
+    @DeleteMapping
+    public ResponseEntity<Map<String, String>> deletarConta(
+            @RequestBody DeletarContaRequest request) {
+        String email = SecurityUtils.getUsuarioAutenticadoEmail();
+        usuarioService.deletarConta(email, request.senha());
+        return ResponseEntity.ok(Map.of(
+            "mensagem", "Conta excluída com sucesso. Todos os seus dados foram removidos."
+        ));
     }
 
     /** GET /api/usuarios/me/stats */
@@ -86,5 +103,9 @@ public class PerfilController {
             String linkedinUrl,
             String githubUrl,
             String portfolioUrl
+    ) {}
+
+    public record DeletarContaRequest(
+            @NotBlank String senha
     ) {}
 }
