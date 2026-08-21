@@ -43,14 +43,26 @@ public class UsuarioService {
     }
 
     @Transactional
-    public Usuario atualizarPerfil(String email, String nome, String linkedinUrl, String githubUrl, String portfolioUrl) {
+    public Usuario atualizarPerfil(String email, String nome, String linkedinUrl,
+                                    String githubUrl, String portfolioUrl) {
         Usuario usuario = buscarPorEmail(email);
-        if (nome != null && !nome.isBlank()) {
-            usuario.setNome(nome);
-        }
+        if (nome != null && !nome.isBlank()) usuario.setNome(nome);
         usuario.setLinkedinUrl(linkedinUrl);
         usuario.setGithubUrl(githubUrl);
         usuario.setPortfolioUrl(portfolioUrl);
         return repository.save(usuario);
+    }
+
+    /**
+     * Exclui permanentemente a conta do usuário e todos os dados associados.
+     * Requer confirmação da senha para evitar exclusões acidentais.
+     */
+    @Transactional
+    public void deletarConta(String email, String senhaConfirmacao) {
+        Usuario usuario = buscarPorEmail(email);
+        if (!passwordEncoder.matches(senhaConfirmacao, usuario.getSenha())) {
+            throw new BusinessException("Senha incorreta. A conta não foi excluída.");
+        }
+        repository.delete(usuario);
     }
 }
